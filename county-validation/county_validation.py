@@ -22,8 +22,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from pathlib import Path
-from itertools import accumulate
-import pdb
+from statistics import mode, median
 
 here = Path(__file__).parent
 
@@ -77,29 +76,60 @@ def get_wide_df_from_1p3a():
 
     return (cases, deaths)
 
+
 def get_agg(df):
     return df.cumsum(axis=1, skipna=False)
 
-def do_validation(ip3a, factsusa, cv_scraper):
+
+def get_mode_and_valid_score(*args):
+    # all unique? use median. Else, use mode.
+    if len(set(args)) == len(args):
+        my_mode = median(args)
+    else:
+        my_mode = mode(args)
+    valid_score = len([el for el in args if el == my_mode]) / len(args)
+    return (my_mode, valid_score)
+
+
+def do_validation(cases_collection):
+    """stackoverflow.com/questions/42277400/apply-a-function-element-wise-to-two-dataframes
+
+    m_and_v = np.vectorize(get_mode_and_valid_score)(cases_collection)
+    cases = m_and_v.applymap(lambda x: x[0])
+    valid_score = m_and_v.applymap(lambda x: x[1])
+
+    but couldn't quite get it yet. going the clunky route for now. 
     """
-    * make sure we have matching columns - add dates if we need to 
-    * write (ip3a_cases - local_cases == 0).to_csv() to VALIDATION_OUT
-    """
-    pass
+    shape = cases_collection[0].shape
+    for df in cases_collection[1:]:
+        assert df.shape == shape, "df not shaped same, missing date?"
+
+    cases = pd.DataFrame(np.nan, index=df.index, columns=df.columns)
+    valid_score = cases.copy()
+
+    for i in range(shape[0]):
+        for j in range(shape[1]):
+            args = [el.iloc[i, j] for el in cases_collection]
+            if np.nan not in args:
+                (
+                    cases.iloc[i, j],
+                    valid_score.iloc[i, j],
+                ) = get_mode_and_valid_score(*args)
+
+    return (cases, valid_score)
 
 
 def main():
     while True:
-        (ip3a_cases, _) = get_wide_df_from_1p3a()
-        ip3a_cases_agg = get_agg(ip3a_cases)
+        (ip3a_cases, ip3a_deaths) = get_wide_df_from_1p3a()
 
         (ip3a_cases_2, _) = get_wide_df_from_1p3a()
-        ip3a_cases_2.iloc[0,0] = ip3a_cases_2.iloc[0,0] + 1
+        ip3a_cases_2.iloc[0, 0] = ip3a_cases_2.iloc[0, 0] + 1
         ip3a_cases_2_agg = get_agg(ip3a_cases_2)
 
         (ip3a_cases_3, _) = get_wide_df_from_1p3a()
-        ip3a_cases_3.iloc[0,1] = ip3a_cases_2.iloc[0,1] + 1
-        ip3a_cases_3.iloc[0,2] = ip3a_cases_2.iloc[0,2] + 1
+        ip3a_cases_3.iloc[0, 1] = ip3a_cases_2.iloc[0, 1] + 1
+        ip3a_cases_3.iloc[0, 2] = ip3a_cases_2.iloc[0, 2] + 1
         ip3a_cases_3_agg = get_agg(ip3a_cases_3)
 
         do_validation(ip3a_cases, ip3a_cases_2, ip3a_cases_3)
