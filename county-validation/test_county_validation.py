@@ -23,3 +23,13 @@ def test_do_validation():
     assert cases_valid.iloc[0, 0] == 2 / 3
     assert cases_valid.iloc[0, 1] == 2 / 3
     assert cases_valid.iloc[0, 2] == 1
+
+
+def test_reload_data():
+    pdb.set_trace()
+    cv.reload_data(cv.CASES_FROM_1P3A)
+    for pth in [cv.CASES_FROM_1P3A, cv.DEATHS_FROM_USA_FACTS]:
+        assert pth.exists()
+        assert cv.timedelta(seconds=cv.UPDATE_FREQ) > (
+            cv.datetime.now() - cv.datetime.fromtimestamp(pth.stat().st_mtime)
+        )

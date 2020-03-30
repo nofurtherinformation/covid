@@ -17,29 +17,65 @@ Island, WA, 1, 1, 3, 6, 6, 6, 7, 14, 16
 * Write cases_valid.cs
 
 """
+import urllib.request
+import csv
+import io
+import json
 import time
 import pandas as pd
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from statistics import mode, median
 
-UPDATE_FREQ = 24 * 3600 
+UPDATE_FREQ = 24 * 3600
 
 here = Path(__file__).parent
-CASES_FROM_1P3A = Path(here / "../data/cases_1P3A.csv")
-DEATHS_FROM_1P3A = Path(here / "../data/deaths_1P3A.csv")
-CASES_FROM_USA_FACTS = Path(here / "../data/cases_usa_f.csv")
-DEATHS_FROM_USA_FACTS = Path(here / "../data/cases_usa_f.csv")
+out_path = Path(here / "../data/validation")
+CASES_FROM_1P3A = Path(out_path / "cases_1P3A.csv")
+DEATHS_FROM_1P3A = Path(out_path / "deaths_1P3A.csv")
+CASES_FROM_USA_FACTS = Path(out_path / "cases_usa_f.csv")
+DEATHS_FROM_USA_FACTS = Path(out_path / "cases_usa_f.csv")
 
 URL_1P3A = "https://instant.1point3acres.com/v1/api/coronavirus/us/cases?token=PFl0dpfo"
 URL_USA_FACTS_CASES_URL = "https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv"
-out_path = Path(here / "../data/validation")
 
 
-def get_data():
+def reload_data(path):
+    if not path.exists() or (
+        datetime.now() - datetime.fromtimestamp(path.stat().st_mtime)
+        > timedelta(seconds=UPDATE_FREQ)
+    ):
+        if "1P3A" in path.name:
+            urllib.request.urlretrieve(URL_1P3A, path)
 
-    pass
+def transform_1p3a_narrow_to_wide(narrow):
+    # Read csv:, i, state, county, date, cases, deaths
+    # create df with (state,county,date) as index
+    narrow = pd.read_csv(
+        CASES_FROM_1P3A, index_col=[1, 2, 0], usecols=[1, 2, 3, 4, 5]
+    )
+
+    # multiple vals for same date, so we want to sum:
+    narrow = (
+        narrow.groupby(narrow.index)["confirmed_count", "death_count"]
+        .sum()
+        .reset_index()
+    )
+
+    # pivot, but first get date back & reset index
+    narrow["date"] = narrow["index"].apply(lambda x: x[2])
+    narrow["index"] = narrow["index"].apply(lambda x: x[:2])
+    narrow = narrow.set_index("index")
+    cases = narrow.pivot(columns="date", values="confirmed_count")
+    deaths = narrow.pivot(columns="date", values="death_count")
+
+    # make sure we're not missing any cols, NANs -> 0
+    # take advantage of df mutability
+    for df in cases, deaths:
+        add_missing_date_cols(df)
+
+    return (cases, deaths)
 
 
 def add_missing_date_cols(df, start="2020-01-21", end=None):
