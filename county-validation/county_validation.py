@@ -24,10 +24,22 @@ from datetime import datetime
 from pathlib import Path
 from statistics import mode, median
 
-here = Path(__file__).parent
+UPDATE_FREQ = 24 * 3600 
 
-CASES_FROM_1P3A = Path(here / "../data/cases.csv")
+here = Path(__file__).parent
+CASES_FROM_1P3A = Path(here / "../data/cases_1P3A.csv")
+DEATHS_FROM_1P3A = Path(here / "../data/deaths_1P3A.csv")
+CASES_FROM_USA_FACTS = Path(here / "../data/cases_usa_f.csv")
+DEATHS_FROM_USA_FACTS = Path(here / "../data/cases_usa_f.csv")
+
+URL_1P3A = "https://instant.1point3acres.com/v1/api/coronavirus/us/cases?token=PFl0dpfo"
+URL_USA_FACTS_CASES_URL = "https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv"
 out_path = Path(here / "../data/validation")
+
+
+def get_data():
+
+    pass
 
 
 def add_missing_date_cols(df, start="2020-01-21", end=None):
@@ -98,7 +110,8 @@ def do_validation(cases_collection):
     cases = m_and_v.applymap(lambda x: x[0])
     valid_score = m_and_v.applymap(lambda x: x[1])
 
-    but couldn't quite get it yet. going the clunky route for now. 
+    Didn't work, likely because my function returns a tuple, not a float.
+    Going the clunky route for now. 
     """
     shape = cases_collection[0].shape
     for df in cases_collection[1:]:
@@ -134,7 +147,7 @@ def main():
 
         do_validation(ip3a_cases, ip3a_cases_2, ip3a_cases_3)
 
-        time.sleep(3600)
+        time.sleep(UPDATE_FREQ)
 
 
 if __name__ == "__main__":

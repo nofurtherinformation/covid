@@ -21,5 +21,5 @@ def test_do_validation():
     assert cases.iloc[0, 1] == cases_2.iloc[0, 1]
 
     assert cases_valid.iloc[0, 0] == 2 / 3
-    assert cases_valid.iloc[0, 1] == 1 / 3
+    assert cases_valid.iloc[0, 1] == 2 / 3
     assert cases_valid.iloc[0, 2] == 1
