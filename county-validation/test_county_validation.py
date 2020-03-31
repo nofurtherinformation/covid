@@ -27,7 +27,7 @@ def test_do_validation():
 
 def test_reload_data():
     pdb.set_trace()
-    cv.reload_data(cv.CASES_FROM_1P3A)
+    cv.reload_data()
     for pth in [cv.CASES_FROM_1P3A, cv.DEATHS_FROM_USA_FACTS]:
         assert pth.exists()
         assert cv.timedelta(seconds=cv.UPDATE_FREQ) > (

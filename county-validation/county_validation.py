@@ -18,9 +18,6 @@ Island, WA, 1, 1, 3, 6, 6, 6, 7, 14, 16
 
 """
 import urllib.request
-import csv
-import io
-import json
 import time
 import pandas as pd
 import numpy as np
@@ -28,32 +25,54 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from statistics import mode, median
 
-UPDATE_FREQ = 24 * 3600
+UPDATE_FREQ = 72 * 3600
 
 here = Path(__file__).parent
-out_path = Path(here / "../data/validation")
-CASES_FROM_1P3A = Path(out_path / "cases_1P3A.csv")
-DEATHS_FROM_1P3A = Path(out_path / "deaths_1P3A.csv")
-CASES_FROM_USA_FACTS = Path(out_path / "cases_usa_f.csv")
-DEATHS_FROM_USA_FACTS = Path(out_path / "cases_usa_f.csv")
+validation_out_dir = Path(here / "../data/validation")
+raw_dir = validation_out_dir = validation_out_dir / "Raw"
+
+CASES_FROM_1P3A = validation_out_dir / "cases_1P3A.csv"
+DEATHS_FROM_1P3A = validation_out_dir / "deaths_1P3A.csv"
+RAW_1P3A = raw_dir / "raw_1P3A.csv"
+
+CASES_FROM_USA_FACTS = validation_out_dir / "cases_usa_f.csv"
+DEATHS_FROM_USA_FACTS = validation_out_dir / "cases_usa_f.csv"
+RAW_USA_F_CASES = raw_dir / "raw_usa_f_cases.csv"
+RAW_USA_F_DEATHS = raw_dir / "raw_usa_f_deaths.csv"
 
 URL_1P3A = "https://instant.1point3acres.com/v1/api/coronavirus/us/cases?token=PFl0dpfo"
-URL_USA_FACTS_CASES_URL = "https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv"
+URL_USA_FACTS_CASES = "https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv"
+URL_USA_FACTS_DEATHS = "https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_deaths_usafacts.csv"
 
 
-def reload_data(path):
-    if not path.exists() or (
-        datetime.now() - datetime.fromtimestamp(path.stat().st_mtime)
-        > timedelta(seconds=UPDATE_FREQ)
-    ):
-        if "1P3A" in path.name:
-            urllib.request.urlretrieve(URL_1P3A, path)
 
-def transform_1p3a_narrow_to_wide(narrow):
+
+def is_data_too_old(path):
+    return datetime.now() - datetime.fromtimestamp(
+        path.stat().st_mtime
+    ) > timedelta(seconds=UPDATE_FREQ)
+
+
+def reload_data():
+    for path in PATH_TO_URL:
+        if not path.exists() or is_data_too_old(path):
+            (url, raw, transform) = (
+                    PATH_TO_URL[path]["url"],
+                    PATH_TO_URL[path]["raw"],
+                    PATH_TO_URL[path]["transform"]
+            urllib.request.urlretrieve(url, raw)
+            transform(raw, path)
+
+
+def transform_usa_facts(in_path, out_path):
+    pass
+
+
+def transform_1p3a_narrow_to_wide(in_path, out_path):
     # Read csv:, i, state, county, date, cases, deaths
     # create df with (state,county,date) as index
     narrow = pd.read_csv(
-        CASES_FROM_1P3A, index_col=[1, 2, 0], usecols=[1, 2, 3, 4, 5]
+        in_path, index_col=[1, 2, 0], usecols=[1, 2, 3, 4, 5]
     )
 
     # multiple vals for same date, so we want to sum:
@@ -75,7 +94,8 @@ def transform_1p3a_narrow_to_wide(narrow):
     for df in cases, deaths:
         add_missing_date_cols(df)
 
-    return (cases, deaths)
+    cases.to_csv(CASES_FROM_1P3A)
+    deaths.to_csv(DEATHS_FROM_1P3A)
 
 
 def add_missing_date_cols(df, start="2020-01-21", end=None):
@@ -94,35 +114,6 @@ def add_missing_date_cols(df, start="2020-01-21", end=None):
             df.insert(d_i, dt_str, np.nan)
         if dt < pd.to_datetime(last_date_w_data):
             df[dt_str].fillna(0, inplace=True)
-
-
-def get_wide_df_from_1p3a():
-    # Read csv:, i, state, county, date, cases, deaths
-    # create df with (state,county,date) as index
-    narrow = pd.read_csv(
-        CASES_FROM_1P3A, index_col=[1, 2, 0], usecols=[1, 2, 3, 4, 5]
-    )
-
-    # multiple vals for same date, so we want to sum:
-    narrow = (
-        narrow.groupby(narrow.index)["confirmed_count", "death_count"]
-        .sum()
-        .reset_index()
-    )
-
-    # pivot, but first get date back & reset index
-    narrow["date"] = narrow["index"].apply(lambda x: x[2])
-    narrow["index"] = narrow["index"].apply(lambda x: x[:2])
-    narrow = narrow.set_index("index")
-    cases = narrow.pivot(columns="date", values="confirmed_count")
-    deaths = narrow.pivot(columns="date", values="death_count")
-
-    # make sure we're not missing any cols, NANs -> 0
-    # take advantage of df mutability
-    for df in cases, deaths:
-        add_missing_date_cols(df)
-
-    return (cases, deaths)
 
 
 def get_agg(df):
@@ -166,6 +157,30 @@ def do_validation(cases_collection):
                 ) = get_mode_and_valid_score(*args)
 
     return (cases, valid_score)
+
+
+PATH_TO_URL = {
+    CASES_FROM_1P3A: {
+        "raw": RAW_1P3A,
+        "url": URL_1P3A,
+        "transformer": transform_1p3a_narrow_to_wide,
+    },
+    DEATHS_FROM_1P3A: {
+        "raw": RAW_1P3A,
+        "url": URL_1P3A,
+        "transformer": transform_1p3a_narrow_to_wide,
+    },
+    CASES_FROM_USA_FACTS: {
+        "raw": RAW_USA_F_CASES,
+        "url": URL_USA_FACTS_CASES,
+        "transformer": transform_usa_facts,
+    },
+    DEATHS_FROM_USA_FACTS: {
+        "raw": RAW_USA_F_DEATHS,
+        "url": URL_USA_FACTS_DEATHS,
+        "transformer": transform_usa_facts,
+    },
+}
 
 
 def main():
