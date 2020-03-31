@@ -8,14 +8,17 @@ def test_my_mode():
 
 
 def test_do_validation():
-    (cases_1, deaths_1) = cv.get_wide_df_from_1p3a()
+    cv.reload_data()
+    cases_1 = cv.pd.read_csv(cv.CASES_FROM_1P3A, index_col = 0)
+
     cases_2 = cases_1.copy()
     cases_2.iloc[0, 0] = cases_2.iloc[0, 0] + 1
-    assert cases_2.iloc[0, 0] != cases_1.iloc[0, 0]
     cases_3 = cases_2.copy()
     cases_3.iloc[0, 1] = cases_3.iloc[0, 1] + 1
 
     cases, cases_valid = cv.do_validation([cases_1, cases_2, cases_3])
+
+    assert cases_2.iloc[0, 0] != cases_1.iloc[0, 0]
 
     assert cases.iloc[0, 0] == cases_2.iloc[0, 0]
     assert cases.iloc[0, 1] == cases_2.iloc[0, 1]
@@ -26,7 +29,6 @@ def test_do_validation():
 
 
 def test_reload_data():
-    pdb.set_trace()
     cv.reload_data()
     for pth in [cv.CASES_FROM_1P3A, cv.DEATHS_FROM_USA_FACTS]:
         assert pth.exists()

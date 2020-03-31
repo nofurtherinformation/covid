@@ -29,22 +29,20 @@ UPDATE_FREQ = 72 * 3600
 
 here = Path(__file__).parent
 validation_out_dir = Path(here / "../data/validation")
-raw_dir = validation_out_dir = validation_out_dir / "Raw"
+raw_dir = validation_out_dir / "raw"
 
 CASES_FROM_1P3A = validation_out_dir / "cases_1P3A.csv"
 DEATHS_FROM_1P3A = validation_out_dir / "deaths_1P3A.csv"
 RAW_1P3A = raw_dir / "raw_1P3A.csv"
+URL_1P3A = "https://instant.1point3acres.com/v1/api/coronavirus/us/cases?token=PFl0dpfo"
 
 CASES_FROM_USA_FACTS = validation_out_dir / "cases_usa_f.csv"
-DEATHS_FROM_USA_FACTS = validation_out_dir / "cases_usa_f.csv"
 RAW_USA_F_CASES = raw_dir / "raw_usa_f_cases.csv"
-RAW_USA_F_DEATHS = raw_dir / "raw_usa_f_deaths.csv"
-
-URL_1P3A = "https://instant.1point3acres.com/v1/api/coronavirus/us/cases?token=PFl0dpfo"
 URL_USA_FACTS_CASES = "https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv"
+
+DEATHS_FROM_USA_FACTS = validation_out_dir / "deaths_usa_f.csv"
+RAW_USA_F_DEATHS = raw_dir / "raw_usa_f_deaths.csv"
 URL_USA_FACTS_DEATHS = "https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_deaths_usafacts.csv"
-
-
 
 
 def is_data_too_old(path):
@@ -57,23 +55,25 @@ def reload_data():
     for path in PATH_TO_URL:
         if not path.exists() or is_data_too_old(path):
             (url, raw, transform) = (
-                    PATH_TO_URL[path]["url"],
-                    PATH_TO_URL[path]["raw"],
-                    PATH_TO_URL[path]["transform"]
+                PATH_TO_URL[path]["url"],
+                PATH_TO_URL[path]["raw"],
+                PATH_TO_URL[path]["transform"],
+            )
             urllib.request.urlretrieve(url, raw)
             transform(raw, path)
 
 
 def transform_usa_facts(in_path, out_path):
-    pass
+    data = pd.read_csv(in_path, index_col=[1, 2]).drop(
+        columns=["countyFIPS", "stateFIPS"]
+    )
+    data.to_csv(out_path)
 
 
-def transform_1p3a_narrow_to_wide(in_path, out_path):
+def transform_1p3a_narrow_to_wide(in_path, _):
     # Read csv:, i, state, county, date, cases, deaths
     # create df with (state,county,date) as index
-    narrow = pd.read_csv(
-        in_path, index_col=[1, 2, 0], usecols=[1, 2, 3, 4, 5]
-    )
+    narrow = pd.read_csv(in_path, index_col=[1, 2, 0], usecols=[1, 2, 3, 4, 5])
 
     # multiple vals for same date, so we want to sum:
     narrow = (
@@ -163,40 +163,30 @@ PATH_TO_URL = {
     CASES_FROM_1P3A: {
         "raw": RAW_1P3A,
         "url": URL_1P3A,
-        "transformer": transform_1p3a_narrow_to_wide,
+        "transform": transform_1p3a_narrow_to_wide,
     },
     DEATHS_FROM_1P3A: {
         "raw": RAW_1P3A,
         "url": URL_1P3A,
-        "transformer": transform_1p3a_narrow_to_wide,
+        "transform": transform_1p3a_narrow_to_wide,
     },
     CASES_FROM_USA_FACTS: {
         "raw": RAW_USA_F_CASES,
         "url": URL_USA_FACTS_CASES,
-        "transformer": transform_usa_facts,
+        "transform": transform_usa_facts,
     },
     DEATHS_FROM_USA_FACTS: {
         "raw": RAW_USA_F_DEATHS,
         "url": URL_USA_FACTS_DEATHS,
-        "transformer": transform_usa_facts,
+        "transform": transform_usa_facts,
     },
 }
 
 
 def main():
     while True:
-        (ip3a_cases, ip3a_deaths) = get_wide_df_from_1p3a()
-
-        (ip3a_cases_2, _) = get_wide_df_from_1p3a()
-        ip3a_cases_2.iloc[0, 0] = ip3a_cases_2.iloc[0, 0] + 1
-        ip3a_cases_2_agg = get_agg(ip3a_cases_2)
-
-        (ip3a_cases_3, _) = get_wide_df_from_1p3a()
-        ip3a_cases_3.iloc[0, 1] = ip3a_cases_2.iloc[0, 1] + 1
-        ip3a_cases_3.iloc[0, 2] = ip3a_cases_2.iloc[0, 2] + 1
-        ip3a_cases_3_agg = get_agg(ip3a_cases_3)
-
-        do_validation(ip3a_cases, ip3a_cases_2, ip3a_cases_3)
+        reload_data()
+        # do_validation(ip3a_cases, ip3a_cases_2, ip3a_cases_3)
 
         time.sleep(UPDATE_FREQ)
 
