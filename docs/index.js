@@ -979,7 +979,7 @@ function covidForecastingHtml(geoId) {
     <div>
       <h3>Forecasting</h3>
         <div style="font-size: 80%; position: relative; top: -10px;"><b>Source:</b> <a href="https://github.com/Yu-Group/covid19-severity-prediction">Yu Group at Berkeley</a></div>
-        <b>5-Day Severity Index</b> <div class="info-tooltip" id="info-SeverityIndex"><i class="fa fa-info-circle"></i>
+        <b>Severity Index</b> <div class="info-tooltip" id="info-SeverityIndex"><i class="fa fa-info-circle"></i>
         <span class="tooltip-text"></span>
         </div><span style="text-transform: uppercase" class="county-severity-index--${countySeverityLevel}">: ${countySeverityLevel}
       </span>
