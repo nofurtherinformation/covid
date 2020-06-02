@@ -513,12 +513,19 @@ data panel
 search/geocoding
 */
 
+.mapboxgl-ctrl-top-right {
+  z-index: 10000 !important;
+  /* margin: 0; */
+}
+
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+  margin-top: 7px !important;
+  margin-right: 15px;
+}
+
 .mapboxgl-ctrl-geocoder {
-  z-index: 1000 !important;
+  z-index: 10001 !important;
   position: absolute;
-  /*
-  TODO is is an utter mystery how this works; nothing else seems to position
-  it in a way that doesn't underlap other elements, inspite of the z-index */
-  right: calc((100vw) / 1.6);
-  top: 50px;
+  right: 0;
+  margin: 0;
 }
