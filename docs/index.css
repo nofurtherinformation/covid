@@ -508,3 +508,17 @@ data panel
 .checked .fa-info-circle {
   color: #fff;
 }
+
+/*
+search/geocoding
+*/
+
+.mapboxgl-ctrl-geocoder {
+  z-index: 1000 !important;
+  position: absolute;
+  /*
+  TODO is is an utter mystery how this works; nothing else seems to position
+  it in a way that doesn't underlap other elements, inspite of the z-index */
+  right: calc((100vw) / 1.6);
+  top: 50px;
+}

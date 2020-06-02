@@ -1119,6 +1119,15 @@ const mapbox = deckgl.getMapboxMap();
  
 mapbox.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
+// add search/geocoding control
+mapbox.addControl(
+  new MapboxGeocoder({
+    accessToken: MAPBOX_ACCESS_TOKEN,
+    mapboxgl: mapbox,
+  }),
+  'top-right',
+);
+
 mapbox.on('zoomend', () => {
   const currentZoom = mapbox.getZoom();
   let lat = current_view == null ? deckgl.viewState.latitude : current_view.latitude;
