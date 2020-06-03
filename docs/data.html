@@ -65,6 +65,43 @@
           Healthcare System Capacity includes Staffed beds, Staffed ICU beds, Licensed Beds by County. The data is from
           2018 facility reports with additions/edits allowed in real-time. <br><br>
 
+          <h4> Forecasting statistics </h4>
+
+          <li><b><a href="https://github.com/Yu-Group/covid19-severity-prediction">Hospital Severity Index.</a></b> The <a
+              href="https://www.stat.berkeley.edu/~yugroup/people.html">Yu Group</a> at UC Berkeley Statistics and EECS
+            has compiled, cleaned and continues to update a large corpus of hospital- and county-level data from a variety
+            of public sources to aid data science efforts to combat COVID-19 (see <a
+              href="http://covidseverity.com/">covidseverity.com</a>). <br><br>
+  
+            <p>At the hospital level, their data include the location of the hospital, the number of ICU beds, the total
+              number of employees, and the hospital type. At the county level, their data include COVID-19 cases/deaths
+              from USA Facts and NYT, automatically updated every day, along with demographic information, health resource
+              availability, COVID-19 health risk factors, and social mobility information.</p>
+  
+            <p>An overview of each data set in this corpus is provided <a
+                href="https://github.com/Yu-Group/covid-19-geographic-risk-prediction">here</a>. We will be adding more
+              relevant data sets as they are found. We prepared this data to support healthcare supply distribution
+              efforts through short-term (days) prediction of COVID-19 deaths (and cases) at the county level. We are
+              using the predictions and hospital data to arrive at a covid Pandemic Severity Index (c-PSI) for each
+              hospital. This project is in partnership with <a href="https://response4life.org/">Response4Life</a>. A
+              paper on the current approaches can be found <a
+                href="https://www.stat.berkeley.edu/~binyu/ps/papers2020/covid19_paper.pdf">at this link</a>. The more
+              detailed information with data source descriptions is provided <a
+                href="https://github.com/Yu-Group/covid19-severity-prediction">on the github.</a></p><br>
+  
+  
+            <h4> Population, Demographic, and Socioeconomic Data </h4>
+  
+          <li><b><a href="https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation">County
+                Health Rankings & Roadmaps (CHR&R).</a></b> The CHR&R is a collaboration between the Robert Wood Johnson
+            Foundation and the University of Wisconsin Population Health Institute. The goal is to improve health outcomes
+            for all and to close the health gaps between those with the most and least opportunities for good health.
+            Based on our discussion with their group, we will include following focus areas and related measures for
+            inclusion in the Atlas: income and economic hardship, children living in poverty, median household income,
+            income inequality, access to health care, uninsured, preventable hospital stays, ratio of population to
+            primary care physicians, housing cost and quality, Black/White residential segregation (missing, populations
+            at risk, percentage of 65 and older.<br><br>
+
           <h2> Future Release </h1>
             <hr>
 
@@ -73,43 +110,6 @@
         <li><b><a href="https://github.com/nytimes/covid-19-data">NYTimes.</a></b> The data is the product of dozens of
           journalists working across several time zones to monitor news conferences, analyze data release and seek
           clarification from public officials on how they categorize cases. <br><br>
-
-          <h4> Forecasting statistics </h4>
-
-        <li><b><a href="https://github.com/Yu-Group/covid19-severity-prediction">Hospital Severity Index.</a></b> The <a
-            href="https://www.stat.berkeley.edu/~yugroup/people.html">Yu Group</a> at UC Berkeley Statistics and EECS
-          has compiled, cleaned and continues to update a large corpus of hospital- and county-level data from a variety
-          of public sources to aid data science efforts to combat COVID-19 (see <a
-            href="http://covidseverity.com/">covidseverity.com</a>). <br><br>
-
-          <p>At the hospital level, their data include the location of the hospital, the number of ICU beds, the total
-            number of employees, and the hospital type. At the county level, their data include COVID-19 cases/deaths
-            from USA Facts and NYT, automatically updated every day, along with demographic information, health resource
-            availability, COVID-19 health risk factors, and social mobility information.</p>
-
-          <p>An overview of each data set in this corpus is provided <a
-              href="https://github.com/Yu-Group/covid-19-geographic-risk-prediction">here</a>. We will be adding more
-            relevant data sets as they are found. We prepared this data to support healthcare supply distribution
-            efforts through short-term (days) prediction of COVID-19 deaths (and cases) at the county level. We are
-            using the predictions and hospital data to arrive at a covid Pandemic Severity Index (c-PSI) for each
-            hospital. This project is in partnership with <a href="https://response4life.org/">Response4Life</a>. A
-            paper on the current approaches can be found <a
-              href="https://www.stat.berkeley.edu/~binyu/ps/papers2020/covid19_paper.pdf">at this link</a>. The more
-            detailed information with data source descriptions is provided <a
-              href="https://github.com/Yu-Group/covid19-severity-prediction">on the github.</a></p><br>
-
-
-          <h4> Population, Demographic, and Socioeconomic Data </h4>
-
-        <li><b><a href="https://www.countyhealthrankings.org/explore-health-rankings/rankings-data-documentation">County
-              Health Rankings & Roadmaps (CHR&R).</a></b> The CHR&R is a collaboration between the Robert Wood Johnson
-          Foundation and the University of Wisconsin Population Health Institute. The goal is to improve health outcomes
-          for all and to close the health gaps between those with the most and least opportunities for good health.
-          Based on our discussion with their group, we will include following focus areas and related measures for
-          inclusion in the Atlas: income and economic hardship, children living in poverty, median household income,
-          income inequality, access to health care, uninsured, preventable hospital stays, ratio of population to
-          primary care physicians, housing cost and quality, Black/White residential segregation (missing, populations
-          at risk, percentage of 65 and older.<br><br>
 
           <h4>Social Distancing Proxies</h4>
 
@@ -208,4 +208,5 @@
   }
 </style>
 </body>
+
 </html>
