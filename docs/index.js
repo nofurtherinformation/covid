@@ -581,7 +581,8 @@ function initCounty() {
   if (isCartogram()) {
     cartogramData = gda_proxy.cartogram(countyMap, vals);
   }
-  loadMap(countyMap);
+  
+  createMap();
 }
 
 function OnStateClick() {
@@ -618,7 +619,7 @@ function init_state() {
     cartogramData = gda_proxy.cartogram(stateMap, vals);
   }
 
-  loadMap(stateMap);
+  createMap();
 }
 
 function OnSourceClick(evt) {
@@ -1186,7 +1187,9 @@ function setCartogramView(layers) {
   }
 }
 
-function createMap(data) {
+function createMap() {
+  var data = jsondata[selectedDataset];
+  
   // if no date has been selected, default to most recent
   if (!selectedDate) {
     selectedDate = dates[selectedDataset][dates[selectedDataset].length - 1];
@@ -1424,10 +1427,6 @@ function createMap(data) {
   }
 
   createTimeSlider(data);
-}
-
-function loadMap() {
-  createMap(jsondata[selectedDataset]);
 }
 
 function getElevation(f) {
@@ -1719,11 +1718,7 @@ function OnLISAClick(evt) {
   evt.classList.add("checked");
   document.getElementById("btn-nb").classList.remove("checked");
 
-  if (isState()) {
-    loadMap(stateMap);
-  } else {
-    loadMap(countyMap);
-  }
+  createMap();
 }
 
 function loadScript(url) {
