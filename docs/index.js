@@ -586,10 +586,10 @@ function initCounty() {
 }
 
 function OnStateClick() {
-  loadData(stateMap, init_state);
+  loadData(stateMap, initState);
 }
 
-function init_state() {
+function initState() {
   var vals;
   var nb;
 
