@@ -28,7 +28,6 @@ const COLOR_SCALE = [
   [252, 78, 42],
   [227, 26, 28],
   [189, 0, 38],
-  [128, 0, 38]
 ];
 
 var lisa_labels = ["Not significant", "High-High", "Low-Low", "High-Low", "Low-High", "Undefined", "Isolated"];
