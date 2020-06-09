@@ -533,7 +533,6 @@ function loadData(url, callback) {
 
 function getDatesFromUsafacts(cases) {
   var xLabels = [];
-  let n = cases.length;
   for (let col in cases[0]) {
     if (col.endsWith('20')) {
       xLabels.push(col);
