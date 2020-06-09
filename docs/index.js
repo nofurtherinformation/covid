@@ -699,8 +699,6 @@ function OnCountyClick(target) {
   loadData(countyMap, initCounty);
 }
 
-
-
 function initCounty() {
   var vals;
   var nb;
@@ -781,7 +779,6 @@ function OnSourceClick(evt) {
     selectedDataset = 'states_update.geojson';
   }
 
-
   if (isState()) {
     OnStateClick();
   } else {
@@ -790,11 +787,6 @@ function OnSourceClick(evt) {
 
   // force back to choropleth
   selectedMethod = "choropleth";
-  //updateDates();
-  //if (isLisa()) {
-  //    OnLISAClick(document.getElementById('btn-lisa'));
-  //} else {
-  // }
 }
 
 function OnDataClick(evt) {
