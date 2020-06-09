@@ -228,6 +228,95 @@ function GetFeatureValue(id) {
   return 0;
 }
 
+// TODO document withat this does
+function GetDataValues() {
+  let json = selectedDataset;
+  let txt = data_btn.innerText;
+  if (txt == "Confirmed Count") {
+    return Object.values(caseData[json][selectedDate]);
+  } else if (txt == "Confirmed Count per 10K Population") {
+    var vals = [];
+    for (var id in caseData[json][selectedDate]) {
+      if (populationData[json][id] == undefined || populationData[json][id] == 0)
+        vals.push(0);
+      else
+        vals.push(caseData[json][selectedDate][id] / populationData[json][id] * 10000);
+    }
+    return vals;
+
+  } else if (txt == "Confirmed Count per Licensed Bed") {
+    var vals = [];
+    for (var id in caseData[json][selectedDate]) {
+      if (bedsData[json][id] == undefined || bedsData[json][id] == 0)
+        vals.push(0);
+      else
+        vals.push(caseData[json][selectedDate][id] / bedsData[json][id]);
+    }
+    return vals;
+
+  } else if (txt == "Death Count") {
+    return Object.values(deathsData[json][selectedDate]);
+  } else if (txt == "Death Count per 10K Population") {
+    var vals = [];
+    for (var id in deathsData[json][selectedDate]) {
+      if (populationData[json][id] == undefined || populationData[json][id] == 0)
+        vals.push(0);
+      else
+        vals.push(deathsData[json][selectedDate][id] / populationData[json][id] * 10000);
+    }
+    return vals;
+  } else if (txt == "Death Count/Confirmed Count") {
+    return Object.values(fatalityData[json][selectedDate]);
+  } else if (txt == "Daily New Confirmed Count") {
+    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
+    if (dt_idx == 0) return;
+    let prev_date = dates[selectedDataset][dt_idx - 1];
+    var cur_vals = caseData[json][selectedDate];
+    var pre_vals = caseData[json][prev_date];
+    var rt_vals = [];
+    for (let i in cur_vals) {
+      rt_vals.push(cur_vals[i] - pre_vals[i]);
+    }
+    return rt_vals;
+
+  } else if (txt == "Daily New Confirmed Count per 10K Pop") {
+    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
+    if (dt_idx == 0) return 0;
+    let prev_date = dates[selectedDataset][dt_idx - 1];
+    var cur_vals = caseData[json][selectedDate];
+    var pre_vals = caseData[json][prev_date];
+    var rt_vals = [];
+    for (let i in cur_vals) {
+      rt_vals.push((cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000);
+    }
+    return rt_vals;
+
+  } else if (txt == "Daily New Death Count") {
+    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
+    if (dt_idx == 0) return 0;
+    let prev_date = dates[selectedDataset][dt_idx - 1];
+    var cur_vals = deathsData[json][selectedDate];
+    var pre_vals = deathsData[json][prev_date];
+    var rt_vals = [];
+    for (let i in cur_vals) {
+      rt_vals.push(cur_vals[i] - pre_vals[i]);
+    }
+    return rt_vals;
+
+  } else if (txt == "Daily New Death Count per 10K Pop") {
+    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
+    if (dt_idx == 0) return 0;
+    let prev_date = dates[selectedDataset][dt_idx - 1];
+    var cur_vals = deathsData[json][selectedDate];
+    var pre_vals = deathsData[json][prev_date];
+    var rt_vals = [];
+    for (let i in cur_vals) {
+      rt_vals.push((cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000);
+    }
+    return rt_vals;
+  }
+}
+
 
 /*
  * DATA LOADING
@@ -1493,94 +1582,6 @@ function assignIdsToFeatures(features) {
     features.features[i].properties.id = i;
   }
   return features;
-}
-
-function GetDataValues() {
-  let json = selectedDataset;
-  let txt = data_btn.innerText;
-  if (txt == "Confirmed Count") {
-    return Object.values(caseData[json][selectedDate]);
-  } else if (txt == "Confirmed Count per 10K Population") {
-    var vals = [];
-    for (var id in caseData[json][selectedDate]) {
-      if (populationData[json][id] == undefined || populationData[json][id] == 0)
-        vals.push(0);
-      else
-        vals.push(caseData[json][selectedDate][id] / populationData[json][id] * 10000);
-    }
-    return vals;
-
-  } else if (txt == "Confirmed Count per Licensed Bed") {
-    var vals = [];
-    for (var id in caseData[json][selectedDate]) {
-      if (bedsData[json][id] == undefined || bedsData[json][id] == 0)
-        vals.push(0);
-      else
-        vals.push(caseData[json][selectedDate][id] / bedsData[json][id]);
-    }
-    return vals;
-
-  } else if (txt == "Death Count") {
-    return Object.values(deathsData[json][selectedDate]);
-  } else if (txt == "Death Count per 10K Population") {
-    var vals = [];
-    for (var id in deathsData[json][selectedDate]) {
-      if (populationData[json][id] == undefined || populationData[json][id] == 0)
-        vals.push(0);
-      else
-        vals.push(deathsData[json][selectedDate][id] / populationData[json][id] * 10000);
-    }
-    return vals;
-  } else if (txt == "Death Count/Confirmed Count") {
-    return Object.values(fatalityData[json][selectedDate]);
-  } else if (txt == "Daily New Confirmed Count") {
-    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) return;
-    let prev_date = dates[selectedDataset][dt_idx - 1];
-    var cur_vals = caseData[json][selectedDate];
-    var pre_vals = caseData[json][prev_date];
-    var rt_vals = [];
-    for (let i in cur_vals) {
-      rt_vals.push(cur_vals[i] - pre_vals[i]);
-    }
-    return rt_vals;
-
-  } else if (txt == "Daily New Confirmed Count per 10K Pop") {
-    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) return 0;
-    let prev_date = dates[selectedDataset][dt_idx - 1];
-    var cur_vals = caseData[json][selectedDate];
-    var pre_vals = caseData[json][prev_date];
-    var rt_vals = [];
-    for (let i in cur_vals) {
-      rt_vals.push((cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000);
-    }
-    return rt_vals;
-
-  } else if (txt == "Daily New Death Count") {
-    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) return 0;
-    let prev_date = dates[selectedDataset][dt_idx - 1];
-    var cur_vals = deathsData[json][selectedDate];
-    var pre_vals = deathsData[json][prev_date];
-    var rt_vals = [];
-    for (let i in cur_vals) {
-      rt_vals.push(cur_vals[i] - pre_vals[i]);
-    }
-    return rt_vals;
-
-  } else if (txt == "Daily New Death Count per 10K Pop") {
-    let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) return 0;
-    let prev_date = dates[selectedDataset][dt_idx - 1];
-    var cur_vals = deathsData[json][selectedDate];
-    var pre_vals = deathsData[json][prev_date];
-    var rt_vals = [];
-    for (let i in cur_vals) {
-      rt_vals.push((cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000);
-    }
-    return rt_vals;
-  }
 }
 
 function UpdateLegend() {
