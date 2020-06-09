@@ -1,25 +1,13 @@
 /*
-/*
- * DEPENDENCIES
-*/
-
-const {
-  DeckGL,
-  GeoJsonLayer,
-  TextLayer,
-  ScatterplotLayer,
-  TileLayer,
-} = deck;
-
-/*
  * CONFIG
 */
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibGl4dW45MTAiLCJhIjoiY2locXMxcWFqMDAwenQ0bTFhaTZmbnRwaiJ9.VRNeNnyb96Eo-CorkJmIqg';
 
-const COLOR_SCALE = [
+const CHOROPLETH_COLORS = [
+  // <= 0
   [240, 240, 240],
-  // positive
+  // > 0
   [255, 255, 204],
   [255, 237, 160],
   [254, 217, 118],
@@ -57,6 +45,12 @@ function getDatesFromGeojson(data) {
   return xLabels;
 }
 
+// converts a tuple of rgb color values to a css-style color string
+// e.g. rbg(255, 255, 255)
+function stringifyRgbColor(colorArray) {
+  return `rgb(${colorArray.join(', ')})`;
+}
+
 
 /*
  * GLOBALS
@@ -89,30 +83,18 @@ var lisa_btn = document.getElementById("btn-lisa");
 var data_btn = document.getElementById("select-data");
 var source_btn = document.getElementById("select-source");
 
-// geoda
+// geoda / analysis
 var gda_proxy;
 var gda_weights = {};
 // TODO what is this?
 var jsondata = {};
 var centroids = {};
+// this is an array of min values for choropleth color bins
+var choroplethBreaks;
 
-// this tracks the map viewport and is used for a hack so that deck doesn't 
-// always zoom to the initial lat/lng. set initial values here.
-var mapPosition = {
-  latitude: 35.850033,
-  longitude: -105.6500523,
-  zoom: 3.5,
-};
-
-// misc
-var colorScale;
-
-var getFillColor = function() {
-  return [255, 255, 255, 200];
-};
-var getLineColor = function() {
-  return [220, 220, 220];
-};
+// map
+var map;
+var mapLayers;
 
 
 /*
@@ -700,28 +682,16 @@ function OnCountyClick(target) {
 }
 
 function initCounty() {
-  var vals;
-  var nb;
+  // calculate breaks
+  var values = GetDataValues();
+  var valueClasses = gda_proxy.custom_breaks(countyMap, "natural_breaks", 8, null, values);
   
-  vals = GetDataValues();
-  nb = gda_proxy.custom_breaks(countyMap, "natural_breaks", 8, null, vals);
-  colorScale = function (x) {
-    if (x == 0) return COLOR_SCALE[0];
-    for (var i = 1; i < nb.breaks.length; ++i) {
-      if (x < nb.breaks[i])
-        return COLOR_SCALE[i];
-    }
-  };
-  getFillColor = function (f) {
-    let v = GetFeatureValue(f.properties.id);
-    if (v == 0) return [255, 255, 255, 200];
-    return colorScale(v);
-  };
-  getLineColor = function (f) {
-    return f.properties.id == selectedId ? [255, 0, 0] : [200, 200, 200];
-  };
+  // update breaks global which gets referenced in createMap (called below)
+  choroplethBreaks = valueClasses.breaks;
+
+  // update legend and other ui elements
   UpdateLegend();
-  UpdateLegendLabels(nb.bins);
+  UpdateLegendLabels(valueClasses.bins);
   choropleth_btn.classList.add("checked");
   lisa_btn.classList.remove("checked");
 
@@ -742,21 +712,7 @@ function initState() {
 
   vals = GetDataValues();
   nb = gda_proxy.custom_breaks(stateMap, "natural_breaks", 8, null, vals);
-  colorScale = function (x) {
-    if (x == 0) return COLOR_SCALE[0];
-    for (var i = 1; i < nb.breaks.length; ++i) {
-      if (x < nb.breaks[i])
-        return COLOR_SCALE[i];
-    }
-  };
-  getFillColor = function (f) {
-    let v = GetFeatureValue(f.properties.id);
-    if (v == 0) return [255, 255, 255];
-    return colorScale(v);
-  };
-  getLineColor = function (f) {
-    return f.properties.id == selectedId ? [255, 0, 0] : [255, 255, 255, 50];
-  };
+
   UpdateLegend();
   UpdateLegendLabels(nb.bins);
   choropleth_btn.classList.add("checked");
@@ -1244,88 +1200,53 @@ function updateDataPanel(e) {
   panelElem.removeAttribute('hidden');
   updateTooltips();
 }
+
+
 /*
  * APPLICATION
 */
 
-// set up deck/mapbox
-const deckgl = new DeckGL({
-  mapboxApiAccessToken: MAPBOX_ACCESS_TOKEN,
-  mapStyle: 'mapbox://styles/mapbox/dark-v9',
-  latitude: mapPosition.latitude,
-  longitude: mapPosition.longitude,
-  zoom: mapPosition.zoom,
-  maxZoom: 18,
-  pitch: 0,
-  controller: true,
-  // see the event handler for map:zoomend below for why this is necessary
-  onViewStateChange: ({viewState}) => {
-    mapPosition = {
-      latitude: viewState.latitude,
-      longitude: viewState.longitude,
-      zoom: viewState.zoom,
-    };
-  },
-  layers: []
-});
+function initMap() {
+  mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
-const mapbox = deckgl.getMapboxMap();
- 
-mapbox.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-
-// without this, deck zooms to an unknown location (0, 0 maybe?) on window 
-// resize
-// TODO figure out why this is necessary
-mapbox.on('zoomend', () => {
-  deckgl.setProps({
-    viewState: mapPosition,
-  });
-});
-
-function resetView(layers) {
-  let viewState = {}
-
-  // HAX: recenter map if changing from cartogram to cloropleth
-  if (cartogramDeselected) {
-    viewState =  {
-      zoom: 3.5,
-      latitude: 35.850033,
-      longitude: -105.6500523,
-      transitionInterpolator: new LinearInterpolator(['bearing']),
-      transitionDuration: 500
-    }
-    cartogramDeselected = false;
-  }
-  deckgl.setProps({
-    layers: layers,
-    viewState
+  map = new mapboxgl.Map({
+    container: 'map-panel',
+    style: 'mapbox://styles/mapbox/light-v10',
+    center: [-105.6500523, 35.850033],
+    zoom: 3.5,
   });
 }
 
-function setCartogramView(layers) {
-  if (isState()) {
-    deckgl.setProps({
-      layers: layers,
-      viewState: {
-        zoom: 6.6,
-        latitude: 3.726726,
-        longitude: -8.854194,
-        transitionInterpolator: new LinearInterpolator(['bearing']),
-        transitionDuration: 500
-      }
+// returns the mapbox gl paint fill color express for the choropleth map based
+// on the current natural breaks bins
+function getMapFillColorExpression() {
+  const expression = [
+    // expression type
+    'step',
+    // input
+    ['get', 'value'],
+    // base value
+    stringifyRgbColor(CHOROPLETH_COLORS[0]),
+    // HACK we have to create a pseudo break for anything greater than zero;
+    // mapbox step expressions don't seem to support inequalities
+    0.00001,
+    stringifyRgbColor(CHOROPLETH_COLORS[1]),
+  ];
+
+  // next we add pairs of breakpoints and colors
+  choroplethBreaks
+    .slice(1, choroplethBreaks.length - 1)
+    .forEach((choroplethBreak, index) => {
+      const color = CHOROPLETH_COLORS[index + 2];
+      const colorStringified = stringifyRgbColor(color);
+
+      // add breakpoint
+      expression.push(choroplethBreak);
+      // add color
+      expression.push(colorStringified);
     });
-  } else {
-    deckgl.setProps({
-      layers: layers,
-      viewState: {
-        zoom: 5.6,
-        latitude: 10.510908,
-        longitude: -30.190367,
-        transitionInterpolator: new LinearInterpolator(['bearing']),
-        transitionDuration: 500
-      }
-    });
-  }
+
+  return expression;
 }
 
 function createMap() {
@@ -1336,226 +1257,71 @@ function createMap() {
     selectedDate = dates[selectedDataset][dates[selectedDataset].length - 1];
   }
 
-  // this is where the deck layers are accumulated before adding to the canvas
-  var layers = [];
-  var labels = [];
+  // run GetFeatureValue for every feature and add `value` property
+  data.features.forEach((feature) => {
+    const { id } = feature.properties;
+    const featureValue = GetFeatureValue(id);
+    // convert from string to numeric (float)
+    feature.properties.value = parseFloat(featureValue);
+  });
 
-  // if local clusters is selected, create labels
-  if (isLisa()) {
-    var datasetCentroids = centroids[selectedDataset];
+  // wait until map "style" has loaded (basemap?) technically we only need 
+  // this to avoid a race condition when the app first launches
+  map.on('load', () => {
+    // clean up existing source and layer if they exist
+    if (map.getLayer('county-data')) {
+      map.removeLayer('county-data');
+    }
 
-    for (let i = 0; i < data.features.length; ++i) {
-      let field = data_btn.innerText;
-      let c = lisaData[selectedDataset][selectedDate][field].clusters[i];
-      if (c == 1) {
-        labels.push({
-          id: i,
-          position: datasetCentroids[i],
-          text: data.features[i].properties.NAME
-        });
+    if (map.getSource('county-data')) {
+      map.removeSource('county-data');
+    }
+
+    map.addSource('county-data', {
+      'type': 'geojson',
+      'data': data,
+    });
+
+    const fillColorExpression = getMapFillColorExpression();
+
+    // add county data below labels layer
+    // https://docs.mapbox.com/mapbox-gl-js/example/geojson-layer-in-stack/
+    var layers = map.getStyle().layers;
+    // Find the index of the first symbol layer in the map style
+    var firstSymbolId;
+    for (var i = 0; i < layers.length; i++) {
+      if (layers[i].type === 'symbol') {
+        firstSymbolId = layers[i].id;
+        break;
       }
     }
+
+    map.addLayer({
+      'id': 'county-data',
+      'type': 'fill',
+      'source': 'county-data',
+      'layout': {},
+      'paint': {
+        'fill-color': fillColorExpression,
+        'fill-opacity': 1,
+        'fill-outline-color': 'rgb(255, 255, 255)',
+      },
+    }, firstSymbolId);
+  });
+
+  if (isState()) {
+    // TODO show state outlines if 1p3a state is selected
   }
 
-  // if cartogram is selected
-  if (isCartogram()) {
-    mapbox.getCanvas().hidden = true;
-    if ('name' in data && data.name.startsWith("state")) {
-      for (let i = 0; i < data.features.length; ++i) {
-        labels.push({
-          id: i,
-          position: cartogramData[i].position,
-          text: data.features[i].properties.NAME
-        });
-      }
-    }
-    layers.push(
-      new ScatterplotLayer({
-        data: cartogramData,
-        getPosition: d => d.position,
-        getFillColor: getFillColor,
-        getLineColor: getLineColor,
-        getRadius: d => d.radius * 10,
-        onHover: handleMapHover,
-        onClick: handleMapClick,
-        pickable: true,
-        updateTriggers: {
-          getLineColor: [
-            selectedId
-          ],
-          getFillColor: [
-            selectedDate, selectedVariable, selectedMethod
-          ]
-        },
-      })
-    );
-    layers.push(
-      new TextLayer({
-        data: labels,
-        pickable: true,
-        getPosition: d => d.position,
-        getText: d => d.text,
-        getSize: 12,
-        fontFamily: 'Gill Sans Extrabold, sans-serif',
-        getTextAnchor: 'middle',
-        getAlignmentBaseline: 'bottom',
-        getColor: [20, 20, 20]
-      })
-    );
-    setCartogramView(layers);
-  // set up the regular map view (cloropleth or hotspots)
-  } else { 
-    mapbox.getCanvas().hidden = false;
-
-    // TODO figure out what this adds and document
-    layers.push(
-      new GeoJsonLayer({
-        id: 'map-layer',
-        data: data,
-        opacity: 0.5,
-        stroked: true,
-        filled: true,
-        lineWidthScale: 1,
-        lineWidthMinPixels: 1,
-        getElevation: getElevation,
-        getFillColor: getFillColor,
-        getLineColor: getLineColor,
-
-        updateTriggers: {
-          getLineColor: [],
-          getFillColor: [
-            selectedDate, selectedVariable, selectedMethod
-          ]
-        },
-        pickable: true,
-        onHover: handleMapHover,
-        onClick: handleMapClick
-      })
-    );
-
-    // this seems to be a proxy for targeting when states are being shown
-    if (isState()) {
-      layers.push(
-        new GeoJsonLayer({
-          data: './states.geojson',
-          opacity: 0.5,
-          stroked: true,
-          filled: false,
-          lineWidthScale: 1,
-          lineWidthMinPixels: 1.5,
-          getLineColor: [220, 220, 220],
-          pickable: false
-        })
-      );
-    }
-
-    if (shouldShowLabels) {
-      layers.push(
-        new TextLayer({
-          data: labels,
-          pickable: true,
-          getPosition: d => d.position,
-          getText: d => d.text,
-          getSize: 18,
-          fontFamily: 'Gill Sans Extrabold, sans-serif',
-          getTextAnchor: 'middle',
-          getAlignmentBaseline: 'bottom',
-          getColor: [250, 250, 250],
-          fontSettings: {
-            buffer: 20,
-            sdf: true,
-            radius: 6
-          }
-        })
-      );
-    }
-
-    // add reservations if we should
-    if (shouldShowReservations) {
-      layers.push(
-        // adapted from https://tgorkin.github.io/docs/layers/tile-layer
-        new TileLayer({
-          id: 'reservations-layer',
-          stroked: true,
-          getLineColor: [0, 255, 255],
-          getFillColor: [100, 100, 100],
-          opacity: 0.25,
-          lineWidthMinPixels: 2.5,
-          // TODO make this a reusable handler for other map overlays
-          getTileData: async ({ x, y, z }) => {
-            const mapSource = `https://api.mapbox.com/v4/lixun910.7luxiq9n/${z}/${x}/${y}.vector.pbf?access_token=${MAPBOX_ACCESS_TOKEN}`;
-            
-            const response = await fetch(mapSource);
-
-            if (response.status >= 400) {
-              return;
-            }
-
-            const buffer = await response.arrayBuffer();
-
-            const tile = new VectorTile(new Pbf(buffer));
-            const features = [];
-
-            for (const layerName in tile.layers) {
-              const vectorTileLayer = tile.layers[layerName];
-
-              for (let i = 0; i < vectorTileLayer.length; i++) {
-                const vectorTileFeature = vectorTileLayer.feature(i);
-                const feature = vectorTileFeature.toGeoJSON(x, y, z);
-                features.push(feature);
-              }
-            }
-            
-            return features;
-          },
-        })
-      );
-    }
-
-    // add reservations if we should
-    if (shouldShowHypersegregatedCities) {
-      layers.push(
-        // adapted from https://tgorkin.github.io/docs/layers/tile-layer
-        new TileLayer({
-          id: 'hypersegregated-layer',
-          stroked: true,
-          getLineColor: [0, 255, 255],
-          getFillColor: [100, 100, 100],
-          opacity: 0.25,
-          lineWidthMinPixels: 2.5,
-          getTileData: async ({ x, y, z }) => {
-            const mapSource = `https://api.mapbox.com/v4/lixun910.131k9vc1/${z}/${x}/${y}.vector.pbf?access_token=${MAPBOX_ACCESS_TOKEN}`;
-
-            const response = await fetch(mapSource);
-
-            if (response.status >= 400) {
-              return;
-            }
-
-            const buffer = await response.arrayBuffer();
-
-            const tile = new VectorTile(new Pbf(buffer));
-            const features = [];
-
-            for (const layerName in tile.layers) {
-              const vectorTileLayer = tile.layers[layerName];
-
-              for (let i = 0; i < vectorTileLayer.length; i++) {
-                const vectorTileFeature = vectorTileLayer.feature(i);
-                const feature = vectorTileFeature.toGeoJSON(x, y, z);
-                features.push(feature);
-              }
-            }
-
-            return features;
-          },
-        })
-      );
-    }
-
-    resetView(layers);
+  if (shouldShowReservations) {
+    // TODO add reservations if selected
   }
 
+  if (shouldShowHypersegregatedCities) {
+    // TODO add hypersegregated cities if selected
+  }
+
+  // TODO factor this out of createMap - doesn't have to do with the map
   if (document.getElementById('linechart').innerHTML == "" ||
     d3.select("#slider").node().max != dates[selectedDataset].length) {
     addTrendLine(data, "");
@@ -1568,10 +1334,6 @@ function createMap() {
   }
 
   createTimeSlider(data);
-}
-
-function getElevation(f) {
-  return f.properties.id == selectedId ? 90000 : 1;
 }
 
 function UpdateLegend() {
@@ -2146,6 +1908,7 @@ function createTimeSlider(geojson) {
 var Module = {
   onRuntimeInitialized: function () {
     gda_proxy = new GeodaProxy();
+    initMap();
     OnCountyClick();
   }
 };
