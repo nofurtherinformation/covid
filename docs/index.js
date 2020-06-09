@@ -322,6 +322,14 @@ function GetDataValues() {
  * DATA LOADING
 */
 
+function assignIdsToFeatures(features) {
+  for (let i = 0; i < features.features.length; i++) {
+    // Track each feature individually with a unique ID.
+    features.features[i].properties.id = i;
+  }
+  return features;
+}
+
 // fetch county health rankings social indicators (aka chr)
 async function fetchChrData() {
   const rows = await d3.csv('chr_social_indicators.csv');
@@ -1573,15 +1581,6 @@ function createMap() {
 
 function getElevation(f) {
   return f.properties.id == selectedId ? 90000 : 1;
-}
-
-// TODO move to utils or data loading section
-function assignIdsToFeatures(features) {
-  for (let i = 0; i < features.features.length; i++) {
-    // Track each feature individually with a unique ID.
-    features.features[i].properties.id = i;
-  }
-  return features;
 }
 
 function UpdateLegend() {
