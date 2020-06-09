@@ -1664,7 +1664,7 @@ function updateTooltips() {
   });
 }
 
-function OnChoroplethClick(evt) {
+function OnChoroplethClick() {
   selectedMethod = "choropleth";
   if (isState()) {
     OnStateClick();
