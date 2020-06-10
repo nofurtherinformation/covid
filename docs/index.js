@@ -1097,23 +1097,34 @@ function covidForecastingHtml(geoId) {
 }
 
 function updateDataPanel(e) {
+  const { features } = e;
+
+  // validate for exactly one feature (this should never happen but just in 
+  // case)
+  if (features.length !== 1) {
+    console.error('More than one county returned on map click');
+    return;
+  }
+
+  const [ feature ] = features;
+  const { properties } = feature;
 
   let geoId; 
   let html = '';
   const geoIdElem = document.querySelector('#geoid');
 
-  const id = e.object.properties.id;
+  const id = properties.id;
 
-  if (e.object) geoId = parseInt(e.object.properties.GEOID);
+  if (feature) geoId = parseInt(properties.GEOID);
   if (!geoId) {
-    if (e.object) {
+    if (feature) {
       geoId = jsondata[selectedDataset].features[id].properties.GEOID;
     } else {
       geoId = geoIdElem.value;
     }
   }
 
-  let stateAbbr = e.object.properties.state_abbr;
+  let stateAbbr = properties.state_abbr;
   if (!stateAbbr) {
     stateAbbr = jsondata[selectedDataset].features[id].properties.state_abbr;
   }
@@ -1224,6 +1235,9 @@ function initMap() {
     }),
     'top-right',
   );
+
+  map.on('click', 'county-data', handleMapClick);
+  // TODO use same `handleMapClick` handler for clicking on a state?
 }
 
 // returns the mapbox gl paint fill color express for the choropleth map based
