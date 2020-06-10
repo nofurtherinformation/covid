@@ -423,14 +423,6 @@ data panel
   border-radius: 0px 0px 0px 10px;
 }
 
-/* move mapbox controls so they don't overlap panels */
-.mapboxgl-ctrl-bottom-right {
-  /* right: 300px !important; */
-}
-.mapboxgl-ctrl-bottom-left {
-  /* left: 425px !important; */
-}
-
 /* county severity index (berkeley) */
 .county-severity-index--low {
   color: yellow;
@@ -515,3 +507,24 @@ data panel
 .checked .fa-info-circle {
   color: #fff;
 }
+
+
+/*
+search/geocoding
+*/
+
+/* .mapboxgl-ctrl-top-right {
+  z-index: 10000 !important;
+} */
+
+/* .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+  margin-top: 7px !important;
+  margin-right: 15px;
+} */
+
+/* .mapboxgl-ctrl-geocoder {
+  z-index: 10001 !important;
+  position: absolute;
+  right: 0;
+  margin: 0;
+} */

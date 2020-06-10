@@ -1215,6 +1215,15 @@ function initMap() {
     center: [-105.6500523, 35.850033],
     zoom: 3.5,
   });
+
+  // add search/geocoding control
+  map.addControl(
+    new MapboxGeocoder({
+      accessToken: MAPBOX_ACCESS_TOKEN,
+      mapboxgl,
+    }),
+    'top-right',
+  );
 }
 
 // returns the mapbox gl paint fill color express for the choropleth map based
