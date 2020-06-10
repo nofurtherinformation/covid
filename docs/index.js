@@ -1264,50 +1264,46 @@ function createMap() {
     // convert from string to numeric (float)
     feature.properties.value = parseFloat(featureValue);
   });
+  
+  // clean up existing source and layer if they exist
+  if (map.getLayer('county-data')) {
+    map.removeLayer('county-data');
+  }
 
-  // wait until map "style" has loaded (basemap?) technically we only need 
-  // this to avoid a race condition when the app first launches
-  map.on('load', () => {
-    // clean up existing source and layer if they exist
-    if (map.getLayer('county-data')) {
-      map.removeLayer('county-data');
-    }
+  if (map.getSource('county-data')) {
+    map.removeSource('county-data');
+  }
 
-    if (map.getSource('county-data')) {
-      map.removeSource('county-data');
-    }
-
-    map.addSource('county-data', {
-      'type': 'geojson',
-      'data': data,
-    });
-
-    const fillColorExpression = getMapFillColorExpression();
-
-    // add county data below labels layer
-    // https://docs.mapbox.com/mapbox-gl-js/example/geojson-layer-in-stack/
-    var layers = map.getStyle().layers;
-    // Find the index of the first symbol layer in the map style
-    var firstSymbolId;
-    for (var i = 0; i < layers.length; i++) {
-      if (layers[i].type === 'symbol') {
-        firstSymbolId = layers[i].id;
-        break;
-      }
-    }
-
-    map.addLayer({
-      'id': 'county-data',
-      'type': 'fill',
-      'source': 'county-data',
-      'layout': {},
-      'paint': {
-        'fill-color': fillColorExpression,
-        'fill-opacity': 1,
-        'fill-outline-color': 'rgb(255, 255, 255)',
-      },
-    }, firstSymbolId);
+  map.addSource('county-data', {
+    'type': 'geojson',
+    'data': data,
   });
+
+  const fillColorExpression = getMapFillColorExpression();
+
+  // add county data below labels layer
+  // https://docs.mapbox.com/mapbox-gl-js/example/geojson-layer-in-stack/
+  var layers = map.getStyle().layers;
+  // Find the index of the first symbol layer in the map style
+  var firstSymbolId;
+  for (var i = 0; i < layers.length; i++) {
+    if (layers[i].type === 'symbol') {
+      firstSymbolId = layers[i].id;
+      break;
+    }
+  }
+
+  map.addLayer({
+    'id': 'county-data',
+    'type': 'fill',
+    'source': 'county-data',
+    'layout': {},
+    'paint': {
+      'fill-color': fillColorExpression,
+      'fill-opacity': 1,
+      'fill-outline-color': 'rgb(255, 255, 255)',
+    },
+  }, firstSymbolId);
 
   if (isState()) {
     // TODO show state outlines if 1p3a state is selected
@@ -1902,13 +1898,23 @@ function createTimeSlider(geojson) {
   })
 }
 
+
 /*
  * ENTRY POINT
 */
 var Module = {
   onRuntimeInitialized: function () {
+    // init geoda
     gda_proxy = new GeodaProxy();
+    
+    // load map first
     initMap();
-    OnCountyClick();
+
+    // then render counties (our default view)
+    map.on('load', () => {
+      // this has to be wrapped in an function, otherwise mapbox tries to pass 
+      // it an arg that throws an error in OnCountyClick
+      OnCountyClick();
+    });
   }
 };
