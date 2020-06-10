@@ -546,7 +546,7 @@ function parseUsaFactsData(data, confirm_data, death_data) {
     let geoid = parseInt(data.features[i].properties.GEOID);
     let beds = data.features[i].properties.beds;
     if (!(geoid in conf_dict)) {
-      console.log("UsaFacts does not have:", data.features[i].properties);
+      // console.log("UsaFacts does not have:", data.features[i].properties);
       for (let j = 0; j < dates[selectedDataset].length; ++j) {
         let d = dates[selectedDataset][j];
         caseData[json][d][i] = 0;
