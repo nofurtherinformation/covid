@@ -17,6 +17,20 @@ const {
  * CONFIG
 */
 
+
+$(document).on('click', '.panel-heading span.clickable', function(e){
+    var $this = $(this);
+  if(!$this.hasClass('panel-collapsed')) {
+    $this.parents('.panel').find('.panel-body').slideUp();
+    $this.addClass('panel-collapsed');
+    $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+  } else {
+    $this.parents('.panel').find('.panel-body').slideDown();
+    $this.removeClass('panel-collapsed');
+    $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+  }
+})
+
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibGl4dW45MTAiLCJhIjoiY2locXMxcWFqMDAwenQ0bTFhaTZmbnRwaiJ9.VRNeNnyb96Eo-CorkJmIqg';
 
 const COLOR_SCALE = [
@@ -1070,7 +1084,7 @@ function updateDataPanel(e) {
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const mapbox = new mapboxgl.Map({
-  container: 'map',
+  container: document.body,
   style: 'mapbox://styles/lixun910/ckbcmga2j0lbl1ipi4dhpimbt',
   center: [ -105.6500523, 35.850033],
   zoom: 3.5
@@ -1571,12 +1585,7 @@ function GetDataValues() {
     return Object.values(fatalityData[json][selectedDate]);
   } else if (txt == "Daily New Confirmed Count") {
     let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) { 
-      let nn = caseData[json][selectedDate].length;
-      let rtn = []
-      for (let i =0; i < nn; ++i) rtn.push(0);
-      return rtn;
-    }
+    if (dt_idx == 0) return;
     let prev_date = dates[selectedDataset][dt_idx - 1];
     var cur_vals = caseData[json][selectedDate];
     var pre_vals = caseData[json][prev_date];
@@ -1588,58 +1597,37 @@ function GetDataValues() {
 
   } else if (txt == "Daily New Confirmed Count per 10K Pop") {
     let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) { 
-      let nn = caseData[json][selectedDate].length;
-      let rtn = []
-      for (let i =0; i < nn; ++i) rtn.push(0);
-      return rtn;
-    }
+    if (dt_idx == 0) return 0;
     let prev_date = dates[selectedDataset][dt_idx - 1];
     var cur_vals = caseData[json][selectedDate];
     var pre_vals = caseData[json][prev_date];
     var rt_vals = [];
     for (let i in cur_vals) {
-      let check_val = (cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000;
-      if (isNaN(check_val) || check_val == undefined) check_val = 0;
-      rt_vals.push(check_val);
+      rt_vals.push((cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000);
     }
     return rt_vals;
 
   } else if (txt == "Daily New Death Count") {
     let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) { 
-      let nn = caseData[json][selectedDate].length;
-      let rtn = []
-      for (let i =0; i < nn; ++i) rtn.push(0);
-      return rtn;
-    }
+    if (dt_idx == 0) return 0;
     let prev_date = dates[selectedDataset][dt_idx - 1];
     var cur_vals = deathsData[json][selectedDate];
     var pre_vals = deathsData[json][prev_date];
     var rt_vals = [];
     for (let i in cur_vals) {
-      let check_val = cur_vals[i] - pre_vals[i];
-      if (isNaN(check_val) || check_val == undefined) check_val = 0;
-      rt_vals.push(check_val);
+      rt_vals.push(cur_vals[i] - pre_vals[i]);
     }
     return rt_vals;
 
   } else if (txt == "Daily New Death Count per 10K Pop") {
     let dt_idx = dates[selectedDataset].indexOf(selectedDate);
-    if (dt_idx == 0) { 
-      let nn = caseData[json][selectedDate].length;
-      let rtn = []
-      for (let i =0; i < nn; ++i) rtn.push(0);
-      return rtn;
-    }
+    if (dt_idx == 0) return 0;
     let prev_date = dates[selectedDataset][dt_idx - 1];
     var cur_vals = deathsData[json][selectedDate];
     var pre_vals = deathsData[json][prev_date];
     var rt_vals = [];
     for (let i in cur_vals) {
-      let check_val = (cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000;
-      if (isNaN(check_val) || check_val == undefined) check_val = 0;
-      rt_vals.push(check_val);
+      rt_vals.push((cur_vals[i] - pre_vals[i]) / populationData[json][i] * 10000);
     }
     return rt_vals;
   }
@@ -1752,23 +1740,9 @@ function OnLISAClick(evt) {
     sig = lisaData[selectedDataset][selectedDate][field].sig;
 
   } else {
-    let all_zeros = true;
-    for (let i=0; i<data.length; ++i) { 
-      if (data[i] != 0)
-        all_zeros = false;
-    }
-    if (all_zeros) {
-      clusters = [];
-      sig = [];
-      for (let i=0; i<data.length; ++i) { 
-        clusters.push(0);
-        sig.push(0);
-      }
-    } else {
-      var lisa = gda_proxy.local_moran1(w.map_uuid, w.w_uuid, data);
-      clusters = gda_proxy.parseVecDouble(lisa.clusters());
-      sig = gda_proxy.parseVecDouble(lisa.significances());
-    }
+    var lisa = gda_proxy.local_moran1(w.map_uuid, w.w_uuid, data);
+    clusters = gda_proxy.parseVecDouble(lisa.clusters());
+    sig = gda_proxy.parseVecDouble(lisa.significances());
     if (!(selectedDate in lisaData[selectedDataset])) lisaData[selectedDataset][selectedDate] = {}
     if (!(field in lisaData[selectedDataset][selectedDate])) lisaData[selectedDataset][selectedDate][field] = {}
     lisaData[selectedDataset][selectedDate][field]['clusters'] = clusters;
@@ -1779,7 +1753,7 @@ function OnLISAClick(evt) {
 
   getFillColor = function(f) {
     var c = clusters[f.properties.id];
-    if (c == 0 || c == undefined) return [255, 255, 255, 200];
+    if (c == 0) return [255, 255, 255, 200];
     return hexToRgb(color_vec[c]);
   };
 
@@ -2183,6 +2157,7 @@ function createTimeSlider(geojson) {
 }
 
 function onSliderChange(val) {
+  console.log(val);
   var width = 280,
     height = 180,
     padding = 28;
