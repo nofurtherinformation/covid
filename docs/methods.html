@@ -61,10 +61,10 @@
     <div id="root">
       <script>
         window.onload = function(){
-          let link = window.location.href.split('io/covid/')[1]?.split('html')[0] ?? ''
-          document.querySelector('#targetLink').href = `https://nifty-sinoussi-9d6851.netlify.app/${link}`
+          let link = window.location.href.split('io/covid/')[1]?.split('.html')[0] ?? ''
+          document.querySelector('#targetLink').href = `https://blissful-wing-28aea6.netlify.app/${link}`
           setTimeout(function(){
-            window.location.replace(`https://nifty-sinoussi-9d6851.netlify.app/${link}`);
+            window.location.replace(`https://blissful-wing-28aea6.netlify.app/${link}`);
           }, 5000)
         }
       </script>
