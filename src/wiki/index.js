@@ -142,7 +142,7 @@ export const pages = {
             <p>
                 The <HoverButton selector="#mapType" backup="#showHideLeft" text="Map Type"/> buttons change how the map is colored and how the data is symbolized.
                 Natural breaks (jenks) uses a non-linear algorithm to classify (bin) data into groups, box map uses the same concept as a box plot chart, and hotspots 
-                identify clusters of high and low rates based on LISA methods. Read more on the <a href="./methods.html" target="_blank" rel="noopener noreferrer">methods</a> page.
+                identify clusters of high and low rates based on LISA methods. Read more on the <a href="/methods" target="_blank" rel="noopener noreferrer">methods</a> page.
             </p>
             <p>
                 The <HoverButton selector="#visualizationType" backup="#showHideLeft" text="Visualization Type"/> buttons change the visual representation of the map. The 2D map is 
@@ -282,7 +282,7 @@ export const pages = {
                     Use choropleth maps to see data about the virus on a particular day.
                 </p>
                 <p>
-                    For more details on how the Atlas created the choropleth maps, please see the <a href="./methods.html">Methods page</a>.
+                    For more details on how the Atlas created the choropleth maps, please see the <a href="/methods">Methods page</a>.
                 </p>
                 <hr/>
                 <ol className="tutorialSteps">
@@ -469,7 +469,7 @@ export const pages = {
             <div>
                 <h1>Change Over Time</h1>
                 <p>
-                    How a variable changed over time offers insights into what will happen next. The Atlas uses the animated slider and the time graph to show the history of Covid-19’s spread. Read the <a href="./methods.html">Methods</a> page for more information on data limitations and reporting lags.
+                    How a variable changed over time offers insights into what will happen next. The Atlas uses the animated slider and the time graph to show the history of Covid-19’s spread. Read the <a href="/methods">Methods</a> page for more information on data limitations and reporting lags.
                 </p>
                 <hr/>
                 <ol className="tutorialSteps">

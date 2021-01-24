@@ -32,4 +32,5 @@ yarn-error.log*
 *.swp
 docs/.Rhistory
 docs/map/build
+public/.Rhistory
 *.pyc

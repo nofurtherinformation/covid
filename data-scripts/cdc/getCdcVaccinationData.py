@@ -48,7 +48,7 @@ if __name__ == "__main__":
     fileList = downloadCDCVaccinationData()
     parsedData = parseVaccinationData(fileList)
 
-    # parsedData['vaccineDistributed'].to_csv('./csv/vaccine_dist_cdc.csv', index=False)
-    parsedData['vaccineDistributed'].to_csv(os.path.join(repo_root, 'docs/csv/vaccine_dist_cdc.csv'), index=False)
-    # parsedData['vaccineAdministered'].to_csv('./csv/vaccine_admin_cdc.csv', index=False)
-    parsedData['vaccineAdministered'].to_csv(os.path.join(repo_root, 'docs/csv/vaccine_admin_cdc.csv'), index=False)
+    # parsedData['vaccineDistributed'].to_csv('./public/vaccine_dist_cdc.csv', index=False)
+    parsedData['vaccineDistributed'].to_csv(os.path.join(repo_root, 'public/csv/vaccine_dist_cdc.csv'), index=False)
+    # parsedData['vaccineAdministered'].to_csv('./public/vaccine_admin_cdc.csv', index=False)
+    parsedData['vaccineAdministered'].to_csv(os.path.join(repo_root, 'public/csv/vaccine_admin_cdc.csv'), index=False)

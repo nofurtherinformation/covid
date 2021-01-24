@@ -255,4 +255,53 @@ export const variableTree = {
             }
         }
     },
+    "HEADER:mobility":{},
+    "Incoming Mobility": {
+        "County": {
+            "COVID Exposure Indices": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_LEX_in']
+            }
+        }
+    },
+    "Outgoing Mobility": {
+        "County": {
+            "COVID Exposure Indices": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_LEX_out']
+            }
+        }
+    },
+    "Incoming Mobility Normalized": {
+        "County": {
+            "COVID Exposure Indices": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_LEX_in']
+            }
+        }
+    },
+    "Outgoing Mobility Normalized": {
+        "County": {
+            "COVID Exposure Indices": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_LEX_out']
+            }
+        }
+    },
+    "POI Visits": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "POI Visits Normalized": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
 }

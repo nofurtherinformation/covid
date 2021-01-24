@@ -1,6 +1,8 @@
+// state and reactivity
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
+// UI elements
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -12,11 +14,13 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Switch from '@material-ui/core/Switch';
 
+// scoped CSS
 import styled from 'styled-components';
 
+// utils and helper components
 import { colLookup } from '../utils'; //getGzipData, getArrayCSV
 import Tooltip from './tooltip';
-import { StyledDropDown, BinsContainer } from '../styled_components';
+import { StyledDropDown, BinsContainer, Gutter } from '../styled_components';
 import { setVariableParams, setMapParams, setCurrentData, setPanelState, setParametersAndData } from '../actions'; //variableChangeZ, setNotification, storeMobilityData
 import { fixedScales, colorScales, colors } from '../config';
 import { settings } from '../config/svg';
@@ -208,20 +212,15 @@ const ListSubheader = styled(MenuItem)`
 
 const VariablePanel = (props) => {
 
-  // const getGzipAndCentroids = async (gzipUrl, centroidsUrl) => {
-  //   Promise.all([
-  //       getGzipData(gzipUrl),
-  //       getArrayCSV(centroidsUrl)
-  //     ]).then(
-  //       values => dispatch(storeMobilityData({centroids: values[1], flows: values[0]}))
-  //   )
-  // } 
 
   const dispatch = useDispatch();    
 
   const { cols, currentData,  dataParams, mapParams, panelState, urlParams } = useSelector(state => state); 
   // currentVariable, currentZVariable, storedMobilityData
   const [bivariateZ, setBivariateZ] = useState(false);
+  const [newVariable, setNewVariable] = useState("Confirmed Count per 100K Population");
+  const [currentGeography, setCurrentGeography] = useState('County');
+  const [currentDataset, setCurrentDataset] = useState('1point3acres');
 
   const VariablePresets = {
     "HEADER:cases":{},
@@ -460,7 +459,161 @@ const VariablePanel = (props) => {
       fixedScale: 'forecasting',
       scale3D: 50000
     },
+    "HEADER:mobility":{},
+    "Incoming Mobility": {
+      variableName:"Incoming Mobility",
+      numerator: 'county_LEX_in',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: 1,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000
+    },
+    "Outgoing Mobility": {
+      variableName:"Outgoing Mobility",
+      numerator: 'county_LEX_out',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: 1,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000
+    },
+    "Incoming Mobility Normalized": {
+      variableName:"Incoming Mobility Normalized",
+      numerator: 'county_LEX_in',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: 1,
+      denominator: 'properties',
+      dType: 'characteristic',
+      dProperty: 'population',
+      dRange:null,
+      dIndex:null,
+      scale:100000,
+      scale3D: 10000000
+    },
+    "Outgoing Mobility Normalized": {
+      variableName:"Outgoing Mobility Normalized",
+      numerator: 'county_LEX_out',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: 1,
+      denominator: 'properties',
+      dType: 'characteristic',
+      dProperty: 'population',
+      dRange:null,
+      dIndex:null,
+      scale:100000,
+      scale3D: 10000000
+    },
+    "POI Visits": {
+      variableName:"POI Visits",
+      numerator: 'county_POI_visits',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: 1,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000
+    },
+    "POI Visits Normalized": {
+      variableName:"POI Visits Normalized",
+      numerator: 'county_POI_visits',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: 1,
+      denominator: 'properties',
+      dType: 'characteristic',
+      dProperty: 'population',
+      dRange:null,
+      dIndex:null,
+      scale:100000,
+      scale3D: 10000000
+    },
   }
+  
+  const datasetTree = {
+    'County': {
+      '1point3acres':'county_1p3a.geojson',
+      'New York Times':'county_nyt.geojson',
+      'USA Facts':'county_usfacts.geojson',
+      'CDC':'cdc.geojson',
+      // 'Yu Group at Berkeley':'county_usfacts.geojson',
+      'County Health Rankings':'county_usfacts.geojson',
+      'COVID Exposure Indices':'county_usfacts.geojson',
+      'Safegraph':'county_usfacts.geojson',
+    }, 
+    'State': {
+      '1point3acres':'state_1p3a.geojson',
+      'New York Times':'state_nyt.geojson',
+      'CDC':'state_1p3a.geojson',
+      'County Health Rankings':'state_1p3a.geojson',
+    }
+  }
+
+  const urlParamsTree = {
+    'county_usfacts.geojson': {
+      name: 'USA Facts',
+      geography: 'County'
+    },
+    'county_1p3a.geojson': {
+      name: '1point3acres',
+      geography: 'County'
+    },
+    'county_nyt.geojson': {
+      name: 'New York Times',
+      geography: 'County'
+    },
+    'state_1p3a.geojson': {
+      name: '1point3acres',
+      geography: 'State'
+    },
+    'state_usafacts.geojson': {
+      name: 'USA Facts',
+      geography: 'State'
+    }, 
+    'state_nyt.geojson': {
+      name: 'New York Times',
+      geography: 'State'
+    },
+    'global_jhu.geojson': {
+      name: 'John Hopkins University',
+      geography: 'Global'
+    },
+    'cdc.geojson': {
+      name: 'CDC',
+      geography: 'County'
+    }
+  }
+
+  const allGeographies = ['County', 'State']
+  const allDatasets = ['1point3acres', 'USA Facts', 'New York Times', 'CDC', 'County Health Rankings', "COVID Exposure Indices", 'Safegraph'] //'Yu Group at Berkeley', 
+
+  useEffect(() => {
+    if (newVariable !== dataParams.variableName) {
+      setNewVariable(dataParams.variableName)
+      setCurrentGeography(urlParamsTree[currentData]['geography'])
+      if (dataParams.variableName.indexOf('Vaccin') !== -1 || (dataParams.variableName.indexOf('Test') !== -1 && currentData.indexOf('state') === -1)) {
+        setCurrentDataset('CDC')
+      } else {
+        setCurrentDataset(urlParamsTree[currentData]['name'])
+      }
+    }
+  }, [urlParams])
 
   // mobility variable overlays
 
@@ -662,80 +815,7 @@ const VariablePanel = (props) => {
     if (mapParams.vizType !== vizType) {
       dispatch(setMapParams({vizType}))
     }
-  }
-
-  // const handleZSwitch = () => {
-  //   setBivariateZ(prev => !prev )
-  // }
-  
-  const datasetTree = {
-    'County': {
-      '1point3acres':'county_1p3a.geojson',
-      'New York Times':'county_nyt.geojson',
-      'USA Facts':'county_usfacts.geojson',
-      'CDC':'cdc.geojson',
-      'Yu Group at Berkeley':'county_usfacts.geojson',
-      'County Health Rankings':'county_usfacts.geojson',
-    }, 
-    'State': {
-      '1point3acres':'state_1p3a.geojson',
-      'New York Times':'state_nyt.geojson',
-      'CDC':'state_1p3a.geojson',
-      'County Health Rankings':'state_1p3a.geojson',
-    }
-  }
-
-  const urlParamsTree = {
-    'county_usfacts.geojson': {
-      name: 'USA Facts',
-      geography: 'County'
-    },
-    'county_1p3a.geojson': {
-      name: '1point3acres',
-      geography: 'County'
-    },
-    'county_nyt.geojson': {
-      name: 'New York Times',
-      geography: 'County'
-    },
-    'state_1p3a.geojson': {
-      name: '1point3acres',
-      geography: 'State'
-    },
-    'state_usafacts.geojson': {
-      name: 'USA Facts',
-      geography: 'State'
-    }, 
-    'state_nyt.geojson': {
-      name: 'New York Times',
-      geography: 'State'
-    },
-    'global_jhu.geojson': {
-      name: 'John Hopkins University',
-      geography: 'Global'
-    },
-    'cdc.geojson': {
-      name: 'CDC',
-      geography: 'County'
-    }
-  }
-
-  const [newVariable, setNewVariable] = useState("Confirmed Count per 100K Population");
-  const [currentGeography, setCurrentGeography] = useState('County');
-  const [currentDataset, setCurrentDataset] = useState('1point3acres');
-
-  useEffect(() => {
-    if (newVariable !== dataParams.variableName) {
-      setNewVariable(dataParams.variableName)
-      setCurrentGeography(urlParamsTree[currentData]['geography'])
-      if (dataParams.variableName.indexOf('Vaccin') !== -1 || (dataParams.variableName.indexOf('Test') !== -1 && currentData.indexOf('state') === -1)) {
-        setCurrentDataset('CDC')
-      } else {
-        setCurrentDataset(urlParamsTree[currentData]['name'])
-      }
-    }
-  }, [urlParams])
-  
+  }  
 
   const handleNewVariable = (e) => {
     let tempGeography = currentGeography;
@@ -832,13 +912,11 @@ const VariablePanel = (props) => {
     }
   }
 
-  const allGeographies = ['County', 'State']
-  const allDatasets = ['1point3acres', 'USA Facts', 'New York Times', 'CDC', 'County Health Rankings'] //'Yu Group at Berkeley', 
-
   return (
     <VariablePanelContainer className={panelState.variables ? '' : 'hidden'} otherPanels={panelState.info} id="variablePanel">
       <ControlsContainer>
         <h2>Data Sources &amp;<br/> Map Variables</h2>
+        <Gutter h={20}/>
         <StyledDropDown id="newVariableSelect">
           <InputLabel htmlFor="newVariableSelect">Variable</InputLabel>
           <Select
@@ -1030,6 +1108,7 @@ const VariablePanel = (props) => {
           </RadioGroup>
         </StyledDropDown>
         <p>Visualization Type</p>
+        <Gutter h={10}/>
         <StyledButtonGroup color="primary" aria-label="text button group" id="visualizationType">
           <Button className={mapParams.vizType === '2D' ? 'active' : ''} data-val="2D" key="2D-btn" onClick={() => handleVizTypeButton('2D')}>2D</Button>
           <Button className={mapParams.vizType === '3D' ? 'active' : ''} data-val="3D" key="3D-btn" onClick={() => handleVizTypeButton('3D')}>3D</Button>
@@ -1141,17 +1220,21 @@ const VariablePanel = (props) => {
       </ControlsContainer>
       <div className="noteContainer">
         <h3>Help us improve the Atlas!</h3>
+        <Gutter h={10}/>
         <p>
           <a href="https://docs.google.com/forms/d/e/1FAIpQLSf0KdYeVyvwnz0RLnZijY3kdyFe1SwXukPc--a1HFPE1NRxyw/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer">Take the Atlas v2 survey here </a>
           or share your thoughts at <a href="mailto:contact@theuscovidatlas.org" target="_blank" rel="noopener noreferrer">contact@theuscovidatlas.org.</a>
         </p>
-        <hr></hr>
+        <Gutter h={10}/>
+        <hr />
+        <Gutter h={10}/>
         <p className="note">
           Data is updated with freshest available data at 3pm CST daily, at minimum. 
           In case of data discrepancy, local health departments are considered most accurate as per CDC recommendations. 
-          More information on <a href="data.html">data</a>, <a href="methods.html">methods</a>, 
-          and <a href="FAQ.html">FAQ</a> at main site.
+          More information on <a href="/data">data</a>, <a href="/methods">methods</a>, 
+          and <a href="/faq">FAQ</a> at main site.
         </p>
+        <Gutter h={10}/>
         <div className="poweredByGeoda">
             <a href="https://geodacenter.github.io" target="_blank" rel="noopener noreferrer">
               <img src={`${process.env.PUBLIC_URL}/assets/img/geoda-logo.png`} alt="Geoda Logo"/>
