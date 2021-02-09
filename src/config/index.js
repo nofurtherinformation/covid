@@ -211,6 +211,9 @@ export const dataPresets = {
             'change_from_2019_HOME',
             'change_from_2019_PARTTIME',
             'change_from_2019_FULLTIME',
+            'daily_pct_home_raw',
+            'daily_pct_parttime_raw',
+            'daily_pct_fulltime_raw',
         ], 
         joinCols: ['GEOID', ['FIPS','fips','countyFIPS','GEOID','county']], 
         tableNames: [
@@ -225,6 +228,9 @@ export const dataPresets = {
             'change_HOME',
             'change_PARTTIME',
             'change_FULLTIME',
+            'pct_home',
+            'pct_parttime',
+            'pct_fulltime',
         ],
         accumulate: ['county_LEX_out','county_LEX_in','county_POI_visits'],
         dateList: {
@@ -236,6 +242,9 @@ export const dataPresets = {
             'change_from_2019_HOME': 'isoDateList',
             'change_from_2019_PARTTIME': 'isoDateList',
             'change_from_2019_FULLTIME': 'isoDateList',
+            'daily_pct_home_raw': 'isoDateList',
+            'daily_pct_parttime_raw': 'isoDateList',
+            'daily_pct_fulltime_raw': 'isoDateList',
         }
     },
     'county_1p3a.geojson': {
@@ -663,9 +672,24 @@ export const variablePresets = {
       scale3D: 10000000,
       colorScale: 'mobilityDivergingWork'
     },
-    "Percent Part Time vs 2019": {
-      variableName:"Percent Part Time vs 2019",
-      numerator: 'change_FULLTIME',
+    "Percent Home": {
+      variableName:"Percent Home",
+      numerator: 'pct_home',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingHome'
+    },
+    "Percent Part Time": {
+      variableName:"Percent Part Time",
+      numerator: 'pct_parttime',
       nType: 'time-series',
       nProperty: null,
       nRange: null,
@@ -677,7 +701,22 @@ export const variablePresets = {
       scale:1,
       scale3D: 10000000,
       colorScale: 'mobilityDivergingWork'
-    }
+    },
+    "Percent Full Time": {
+      variableName:"Percent Full Time",
+      numerator: 'pct_fulltime',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingWork'
+    },
 }
 
 export const tooltipInfo = {

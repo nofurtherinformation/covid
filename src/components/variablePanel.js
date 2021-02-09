@@ -589,7 +589,52 @@ const VariablePanel = (props) => {
       scale:1,
       scale3D: 10000000,
       colorScale: 'mobilityDivergingWork'
-    }
+    },
+    "Percent Home": {
+      variableName:"Percent Home",
+      numerator: 'pct_home',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingHome'
+    },
+    "Percent Part Time": {
+      variableName:"Percent Part Time",
+      numerator: 'pct_parttime',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingWork'
+    },
+    "Percent Full Time": {
+      variableName:"Percent Full Time",
+      numerator: 'pct_fulltime',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingWork'
+    },
   }
   
   const datasetTree = {

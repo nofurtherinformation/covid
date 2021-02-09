@@ -328,4 +328,28 @@ export const variableTree = {
             }
         }
     },
+    "Percent Home": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "Percent Part Time": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "Percent Full Time": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
 }
