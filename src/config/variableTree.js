@@ -304,4 +304,28 @@ export const variableTree = {
             }
         }
     },
+    "Percent Home vs 2019": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "Percent Part Time vs 2019": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "Percent Full Time vs 2019": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
 }

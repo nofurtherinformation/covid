@@ -101,6 +101,28 @@ export const colorScales = {
         [129, 123, 185],
         [106, 81, 164],
         [84, 40, 143],
+      ],
+      'mobilityDivergingWork':[
+        [240,240,240],
+        [50,136,189],
+        [102,194,165],
+        [171,221,164],
+        [230,245,152],
+        [254,224,139],
+        [253,174,97],
+        [244,109,67],
+        [213,62,79],
+      ],
+      'mobilityDivergingHome':[
+        [240,240,240],
+        [118,42,131],
+        [153,112,171],
+        [194,165,207],
+        [231,212,232],
+        [217,240,211],
+        [166,219,160],
+        [90,174,97],
+        [27,120,55],
       ]
 }
 
@@ -185,7 +207,10 @@ export const dataPresets = {
             'chr_health_factors',
             'county_LEX_out',
             'county_LEX_in',
-            'county_POI_visits'
+            'county_POI_visits',
+            'change_from_2019_HOME',
+            'change_from_2019_PARTTIME',
+            'change_from_2019_FULLTIME',
         ], 
         joinCols: ['GEOID', ['FIPS','fips','countyFIPS','GEOID','county']], 
         tableNames: [
@@ -196,7 +221,10 @@ export const dataPresets = {
             'chr_health_factors',
             'county_LEX_out',
             'county_LEX_in',
-            'county_POI_visits'
+            'county_POI_visits',
+            'change_HOME',
+            'change_PARTTIME',
+            'change_FULLTIME',
         ],
         accumulate: ['county_LEX_out','county_LEX_in','county_POI_visits'],
         dateList: {
@@ -205,6 +233,9 @@ export const dataPresets = {
             'county_LEX_out': 'isoDateList',
             'county_LEX_in': 'isoDateList',
             'county_POI_visits': 'isoDateList',
+            'change_from_2019_HOME': 'isoDateList',
+            'change_from_2019_PARTTIME': 'isoDateList',
+            'change_from_2019_FULLTIME': 'isoDateList',
         }
     },
     'county_1p3a.geojson': {
@@ -602,6 +633,51 @@ export const variablePresets = {
       scale:100000,
       scale3D: 10000000
     },
+    "Percent Home vs 2019": {
+      variableName:"Percent Home vs 2019",
+      numerator: 'change_HOME',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingHome'
+    },
+    "Percent Full Time vs 2019": {
+      variableName:"Percent Full Time vs 2019",
+      numerator: 'change_PARTTIME',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingWork'
+    },
+    "Percent Part Time vs 2019": {
+      variableName:"Percent Part Time vs 2019",
+      numerator: 'change_FULLTIME',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityDivergingWork'
+    }
 }
 
 export const tooltipInfo = {
