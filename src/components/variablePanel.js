@@ -603,7 +603,7 @@ const VariablePanel = (props) => {
       dIndex:null,
       scale:1,
       scale3D: 10000000,
-      colorScale: 'mobilityDivergingHome'
+      colorScale: 'mobilityHome'
     },
     "Percent Part Time": {
       variableName:"Percent Part Time",
@@ -618,7 +618,7 @@ const VariablePanel = (props) => {
       dIndex:null,
       scale:1,
       scale3D: 10000000,
-      colorScale: 'mobilityDivergingWork'
+      colorScale: 'mobilityWork'
     },
     "Percent Full Time": {
       variableName:"Percent Full Time",
@@ -633,7 +633,7 @@ const VariablePanel = (props) => {
       dIndex:null,
       scale:1,
       scale3D: 10000000,
-      colorScale: 'mobilityDivergingWork'
+      colorScale: 'mobilityWork'
     },
   }
   

@@ -123,6 +123,28 @@ export const colorScales = {
         [166,219,160],
         [90,174,97],
         [27,120,55],
+      ],
+      'mobilityHome':[
+        [240,240,240],
+        [252,251,253],
+        [239,237,245],
+        [218,218,235],
+        [188,189,220],
+        [158,154,200],
+        [128,125,186],
+        [106,81,163],
+        [74,20,134]
+      ],
+      'mobilityWork':[
+        [240,240,240],
+        [255,245,235],
+        [254,230,206],
+        [253,208,162],
+        [253,174,107],
+        [253,141,60],
+        [241,105,19],
+        [217,72,1],
+        [140,45,4],
       ]
 }
 
@@ -685,7 +707,7 @@ export const variablePresets = {
       dIndex:null,
       scale:1,
       scale3D: 10000000,
-      colorScale: 'mobilityDivergingHome'
+      colorScale: 'mobilityHome'
     },
     "Percent Part Time": {
       variableName:"Percent Part Time",
@@ -700,7 +722,7 @@ export const variablePresets = {
       dIndex:null,
       scale:1,
       scale3D: 10000000,
-      colorScale: 'mobilityDivergingWork'
+      colorScale: 'mobilityWork'
     },
     "Percent Full Time": {
       variableName:"Percent Full Time",
@@ -715,7 +737,7 @@ export const variablePresets = {
       dIndex:null,
       scale:1,
       scale3D: 10000000,
-      colorScale: 'mobilityDivergingWork'
+      colorScale: 'mobilityWork'
     },
 }
 
