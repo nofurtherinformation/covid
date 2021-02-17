@@ -256,87 +256,79 @@ export const variableTree = {
         }
     },
     "HEADER:mobility":{},
-    "Incoming Mobility": {
-        "County": {
-            "COVID Exposure Indices": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_LEX_in']
-            }
-        }
-    },
-    "Outgoing Mobility": {
-        "County": {
-            "COVID Exposure Indices": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_LEX_out']
-            }
-        }
-    },
-    "Incoming Mobility Normalized": {
-        "County": {
-            "COVID Exposure Indices": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_LEX_in']
-            }
-        }
-    },
-    "Outgoing Mobility Normalized": {
-        "County": {
-            "COVID Exposure Indices": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_LEX_out']
-            }
-        }
-    },
-    "POI Visits": {
-        "County": {
-            "Safegraph": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_POI_visits']
-            }
-        }
-    },
-    "POI Visits Normalized": {
-        "County": {
-            "Safegraph": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_POI_visits']
-            }
-        }
-    },
-    "Percent Home vs 2019": {
-        "County": {
-            "Safegraph": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_POI_visits']
-            }
-        }
-    },
-    "Percent Part Time vs 2019": {
-        "County": {
-            "Safegraph": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_POI_visits']
-            }
-        }
-    },
-    "Percent Full Time vs 2019": {
-        "County": {
-            "Safegraph": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_POI_visits']
-            }
-        }
-    },
-    "Percent Home on Weekdays": {
-        "County": {
-            "Safegraph": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_POI_visits']
-            }
-        }
-    },
-    "Percent Part Time on Weekdays": {
+    // "Incoming Mobility": {
+    //     "County": {
+    //         "COVID Exposure Indices": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_LEX_in']
+    //         }
+    //     }
+    // },
+    // "Outgoing Mobility": {
+    //     "County": {
+    //         "COVID Exposure Indices": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_LEX_out']
+    //         }
+    //     }
+    // },
+    // "Incoming Mobility Normalized": {
+    //     "County": {
+    //         "COVID Exposure Indices": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_LEX_in']
+    //         }
+    //     }
+    // },
+    // "Outgoing Mobility Normalized": {
+    //     "County": {
+    //         "COVID Exposure Indices": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_LEX_out']
+    //         }
+    //     }
+    // },
+    // "POI Visits": {
+    //     "County": {
+    //         "Safegraph": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_POI_visits']
+    //         }
+    //     }
+    // },
+    // "POI Visits Normalized": {
+    //     "County": {
+    //         "Safegraph": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_POI_visits']
+    //         }
+    //     }
+    // },
+    // "Percent Home vs 2019": {
+    //     "County": {
+    //         "Safegraph": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_POI_visits']
+    //         }
+    //     }
+    // },
+    // "Percent Part Time vs 2019": {
+    //     "County": {
+    //         "Safegraph": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_POI_visits']
+    //         }
+    //     }
+    // },
+    // "Percent Full Time vs 2019": {
+    //     "County": {
+    //         "Safegraph": {
+    //             "geojson":'county_usfacts.geojson',
+    //             "csv":['county_POI_visits']
+    //         }
+    //     }
+    // },
+    "Percent Home on Workdays": {
         "County": {
             "Safegraph": {
                 "geojson":'county_usfacts.geojson',
@@ -344,7 +336,23 @@ export const variableTree = {
             }
         }
     },
-    "Percent Full Time on Weekdays": {
+    "Percent Part Time on Workdays": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "Percent Full Time on Workdays": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "Percent Delivery on Workdays": {
         "County": {
             "Safegraph": {
                 "geojson":'county_usfacts.geojson',
