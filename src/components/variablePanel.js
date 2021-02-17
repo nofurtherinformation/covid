@@ -590,8 +590,8 @@ const VariablePanel = (props) => {
       scale3D: 10000000,
       colorScale: 'mobilityDivergingWork'
     },
-    "Percent Home": {
-      variableName:"Percent Home",
+    "Percent Home on Weekdays": {
+      variableName:"Percent Home on Weekdays",
       numerator: 'pct_home',
       nType: 'time-series',
       nProperty: null,
@@ -605,8 +605,8 @@ const VariablePanel = (props) => {
       scale3D: 10000000,
       colorScale: 'mobilityHome'
     },
-    "Percent Part Time": {
-      variableName:"Percent Part Time",
+    "Percent Part Time on Weekdays": {
+      variableName:"Percent Part Time on Weekdays",
       numerator: 'pct_parttime',
       nType: 'time-series',
       nProperty: null,
@@ -620,8 +620,8 @@ const VariablePanel = (props) => {
       scale3D: 10000000,
       colorScale: 'mobilityWork'
     },
-    "Percent Full Time": {
-      variableName:"Percent Full Time",
+    "Percent Full Time on Weekdays": {
+      variableName:"Percent Full Time on Weekdays",
       numerator: 'pct_fulltime',
       nType: 'time-series',
       nProperty: null,

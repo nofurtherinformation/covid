@@ -233,9 +233,9 @@ export const dataPresets = {
             'change_from_2019_HOME',
             'change_from_2019_PARTTIME',
             'change_from_2019_FULLTIME',
-            'daily_pct_home_raw',
-            'daily_pct_parttime_raw',
-            'daily_pct_fulltime_raw',
+            'daily_pct_home_weekday',
+            'daily_pct_parttime_weekday',
+            'daily_pct_fulltime_weekday',
         ], 
         joinCols: ['GEOID', ['FIPS','fips','countyFIPS','GEOID','county']], 
         tableNames: [
@@ -264,9 +264,9 @@ export const dataPresets = {
             'change_from_2019_HOME': 'isoDateList',
             'change_from_2019_PARTTIME': 'isoDateList',
             'change_from_2019_FULLTIME': 'isoDateList',
-            'daily_pct_home_raw': 'isoDateList',
-            'daily_pct_parttime_raw': 'isoDateList',
-            'daily_pct_fulltime_raw': 'isoDateList',
+            'daily_pct_home_weekday': 'isoDateList',
+            'daily_pct_parttime_weekday': 'isoDateList',
+            'daily_pct_fulltime_weekday': 'isoDateList',
         }
     },
     'county_1p3a.geojson': {
@@ -694,7 +694,7 @@ export const variablePresets = {
       scale3D: 10000000,
       colorScale: 'mobilityDivergingWork'
     },
-    "Percent Home": {
+    "Percent Home on Weekdays": {
       variableName:"Percent Home",
       numerator: 'pct_home',
       nType: 'time-series',
@@ -709,7 +709,7 @@ export const variablePresets = {
       scale3D: 10000000,
       colorScale: 'mobilityHome'
     },
-    "Percent Part Time": {
+    "Percent Part Time on Weekdays": {
       variableName:"Percent Part Time",
       numerator: 'pct_parttime',
       nType: 'time-series',
@@ -724,7 +724,7 @@ export const variablePresets = {
       scale3D: 10000000,
       colorScale: 'mobilityWork'
     },
-    "Percent Full Time": {
+    "Percent Full Time on Weekdays": {
       variableName:"Percent Full Time",
       numerator: 'pct_fulltime',
       nType: 'time-series',

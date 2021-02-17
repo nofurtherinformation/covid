@@ -328,7 +328,7 @@ export const variableTree = {
             }
         }
     },
-    "Percent Home": {
+    "Percent Home on Weekdays": {
         "County": {
             "Safegraph": {
                 "geojson":'county_usfacts.geojson',
@@ -336,7 +336,7 @@ export const variableTree = {
             }
         }
     },
-    "Percent Part Time": {
+    "Percent Part Time on Weekdays": {
         "County": {
             "Safegraph": {
                 "geojson":'county_usfacts.geojson',
@@ -344,7 +344,7 @@ export const variableTree = {
             }
         }
     },
-    "Percent Full Time": {
+    "Percent Full Time on Weekdays": {
         "County": {
             "Safegraph": {
                 "geojson":'county_usfacts.geojson',

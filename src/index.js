@@ -16,7 +16,7 @@ const persistConfig = {
   key: 'root',
   storage,
   stateReconciler: autoMergeLevel2 ,
-  whitelist: ['dataParams', 'mapParams', 'currentData'] // only navigation will be persisted
+  whitelist: [] // only navigation will be persisted 'dataParams', 'mapParams', 'currentData'
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
