@@ -235,8 +235,7 @@ export const dataPresets = {
             // 'change_from_2019_FULLTIME',
             'daily_pct_home_weekday',
             'daily_pct_parttime_weekday',
-            'daily_pct_fulltime_weekday',
-            'daily_pct_delivery_weekday'
+            'daily_pct_fulltime_weekday'
         ], 
         joinCols: ['GEOID', ['FIPS','fips','countyFIPS','GEOID','county']], 
         tableNames: [
@@ -253,8 +252,7 @@ export const dataPresets = {
             // 'change_FULLTIME',
             'pct_home',
             'pct_parttime',
-            'pct_fulltime',
-            'pct_delivery'
+            'pct_fulltime'
         ],
         accumulate: ['county_LEX_out','county_LEX_in','county_POI_visits'],
         dateList: {
@@ -269,7 +267,6 @@ export const dataPresets = {
             'daily_pct_home_weekday': 'isoDateList',
             'daily_pct_parttime_weekday': 'isoDateList',
             'daily_pct_fulltime_weekday': 'isoDateList',
-            'daily_pct_delivery_weekday': 'isoDateList',
         }
     },
     'county_1p3a.geojson': {
@@ -741,22 +738,7 @@ export const variablePresets = {
       scale:1,
       scale3D: 10000000,
       colorScale: 'mobilityWork'
-    },
-    'Percent Delivery on Workdays': {
-      variableName:'Percent Delivery on Workdays',
-      numerator: 'pct_delivery',
-      nType: 'time-series',
-      nProperty: null,
-      nRange: null,
-      denominator: 'properties',
-      dType: null,
-      dProperty: null,
-      dRange:null,
-      dIndex:null,
-      scale:1,
-      scale3D: 10000000,
-      colorScale: 'mobilityWork'
-    },
+    }
 }
 
 export const tooltipInfo = {

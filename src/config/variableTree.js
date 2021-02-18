@@ -351,13 +351,5 @@ export const variableTree = {
                 "csv":['county_POI_visits']
             }
         }
-    },
-    "Percent Delivery on Workdays": {
-        "County": {
-            "Safegraph": {
-                "geojson":'county_usfacts.geojson',
-                "csv":['county_POI_visits']
-            }
-        }
-    },
+    }
 }

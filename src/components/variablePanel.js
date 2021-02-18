@@ -634,22 +634,7 @@ const VariablePanel = (props) => {
       scale:1,
       scale3D: 10000000,
       colorScale: 'mobilityWork'
-    },
-    'Percent Delivery on Workdays': {
-      variableName:'Percent Delivery on Workdays',
-      numerator: 'pct_delivery',
-      nType: 'time-series',
-      nProperty: null,
-      nRange: null,
-      denominator: 'properties',
-      dType: null,
-      dProperty: null,
-      dRange:null,
-      dIndex:null,
-      scale:1,
-      scale3D: 10000000,
-      colorScale: 'mobilityWork'
-    },
+    }
   }
   
   const datasetTree = {
