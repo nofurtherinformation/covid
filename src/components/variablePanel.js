@@ -634,6 +634,38 @@ const VariablePanel = (props) => {
       scale:1,
       scale3D: 10000000,
       colorScale: 'mobilityWork'
+    },
+    "DEX - Device Exposure": {
+      variableName:"DEX - Device Exposure",
+      numerator: 'dex_county',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: null,
+      fixedScale: null
+    },
+    "DEX - Device Exposure Normalized": {
+      variableName:"DEX - Device Exposure Normalized",
+      numerator: 'dex_county',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: 'characteristic',
+      dProperty: 'population',
+      dRange:null,
+      dIndex:null,
+      scale:100000,
+      scale3D: 10000000,
+      colorScale: null,
+      fixedScale: null
     }
   }
   

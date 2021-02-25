@@ -351,5 +351,21 @@ export const variableTree = {
                 "csv":['county_POI_visits']
             }
         }
+    },
+    "DEX - Device Exposure": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
+    },
+    "DEX - Device Exposure Normalized": {
+        "County": {
+            "Safegraph": {
+                "geojson":'county_usfacts.geojson',
+                "csv":['county_POI_visits']
+            }
+        }
     }
 }

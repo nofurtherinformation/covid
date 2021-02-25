@@ -235,7 +235,8 @@ export const dataPresets = {
             'change_from_2019_FULLTIME',
             'daily_pct_home_weekday',
             'daily_pct_parttime_weekday',
-            'daily_pct_fulltime_weekday'
+            'daily_pct_fulltime_weekday',
+            'dex_county'
         ], 
         joinCols: ['GEOID', ['FIPS','fips','countyFIPS','GEOID','county']], 
         tableNames: [
@@ -252,7 +253,8 @@ export const dataPresets = {
             'change_FULLTIME',
             'pct_home',
             'pct_parttime',
-            'pct_fulltime'
+            'pct_fulltime',
+            'dex_county'
         ],
         accumulate: ['county_LEX_out','county_LEX_in','county_POI_visits'],
         dateList: {
@@ -267,6 +269,7 @@ export const dataPresets = {
             'daily_pct_home_weekday': 'isoDateList',
             'daily_pct_parttime_weekday': 'isoDateList',
             'daily_pct_fulltime_weekday': 'isoDateList',
+            'dex_county': 'isoDateList'
         }
     },
     'county_1p3a.geojson': {
@@ -738,6 +741,53 @@ export const variablePresets = {
       scale:1,
       scale3D: 10000000,
       colorScale: 'mobilityWork'
+    },
+    "Percent Full Time on Workdays": {
+      variableName:"Percent Full Time on Workdays",
+      numerator: 'pct_fulltime',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: 'mobilityWork'
+    },
+    "DEX - Device Exposure": {
+      variableName:"DEX - Device Exposure",
+      numerator: 'dex_county',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: null,
+      dProperty: null,
+      dRange:null,
+      dIndex:null,
+      scale:1,
+      scale3D: 10000000,
+      colorScale: null,
+      fixedScale: null
+    },
+    "DEX - Device Exposure Normalized": {
+      variableName:"DEX - Device Exposure Normalized",
+      numerator: 'dex_county',
+      nType: 'time-series',
+      nProperty: null,
+      nRange: null,
+      denominator: 'properties',
+      dType: 'characteristic',
+      dProperty: 'population',
+      dRange:null,
+      dIndex:null,
+      scale:100000,
+      scale3D: 10000000,
+      colorScale: null,
+      fixedScale: null
     }
 }
 
